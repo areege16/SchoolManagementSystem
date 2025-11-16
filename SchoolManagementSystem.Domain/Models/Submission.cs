@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Domain.Models
 {
-    public class Submission
+    public class Submission //TODO add BaseEntity
     {
         public int Id { get; set; }
         public DateTime SubmittedDate { get; set; }
