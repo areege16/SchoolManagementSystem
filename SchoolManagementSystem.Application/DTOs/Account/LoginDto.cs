@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.DTOs.Account
 {
-    class LoginDto
+    public class LoginDto
     {
-        public string UserName { set; get; }
-        public string Password { set; get; }
+        public string UserName { get; set; }
+        public string Name { get; set; }
+        public string Role { get; set; }
+        public string Token { get; set; }
+        public DateTime ExpireAt { get; set; }
+
     }
 }

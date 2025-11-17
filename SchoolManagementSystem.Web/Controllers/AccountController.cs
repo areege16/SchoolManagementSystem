@@ -16,6 +16,7 @@ namespace SchoolManagementSystem.Web.Controllers
         {
             this.mediator = mediator;
         }
+        #region Register
         [HttpPost("Register")]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
@@ -25,5 +26,16 @@ namespace SchoolManagementSystem.Web.Controllers
             });
             return Ok(result);
         }
+        #endregion
+
+        #region Login
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginCommand command)
+        {
+            var result = await mediator.Send(command);
+            return Ok(result);
+        }
+        #endregion
     }
 }
+
