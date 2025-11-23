@@ -30,7 +30,7 @@ namespace SchoolManagementSystem.Web.Controllers
 
         #region Login
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginCommand command)
+        public async Task<IActionResult> Login(LoginCommand command) //TODO use dto instead of command 
         {
             var result = await mediator.Send(command);
             return Ok(result);

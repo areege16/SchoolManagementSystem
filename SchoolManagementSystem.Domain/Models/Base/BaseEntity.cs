@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Domain.Models.Base
 {
-    public class BaseEntity
+    public class BaseEntity  //TODO Add soft delete  
     {
         public int Id { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
