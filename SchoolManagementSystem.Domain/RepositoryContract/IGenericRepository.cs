@@ -11,11 +11,14 @@ namespace SchoolManagementSystem.Domain.RepositoryContract
     public interface IGenericRepository<T> where T : class
     {
         void Add(T item);
-        void Update(T item);
-        void Remove(int id);
+        void AddRange(IEnumerable<T> items);
         T GetByID(int id);
         IQueryable<T> GetAll();
-        IQueryable<T> GetFiltered(Expression<Func<T, bool>> expression,bool trached );
+        IQueryable<T> GetFiltered(Expression<Func<T, bool>> expression, bool tracked);
+        void Update(T item);
+        void UpdateRange(IEnumerable<T> items);
+        void Remove(int id);
+        void RemoveRange(IEnumerable<T> items);    
         Task SaveChangesAsync();
     }
 }

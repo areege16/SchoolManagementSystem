@@ -4,7 +4,7 @@ using SchoolManagementSystem.Application.DTOs.Account;
 
 namespace SchoolManagementSystem.Application.Validations.Account
 {
-    public class RegisterDtoValidator : AbstractValidator<RegisterDto> //TODO register FluentValidation
+    public class RegisterDtoValidator : AbstractValidator<RegisterDto> 
     {
         public RegisterDtoValidator()
         {

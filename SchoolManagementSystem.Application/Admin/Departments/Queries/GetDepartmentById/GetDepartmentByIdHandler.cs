@@ -11,6 +11,7 @@ using SchoolManagementSystem.Domain.Models;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using SchoolManagementSystem.Domain.Enums;
 
 namespace SchoolManagementSystem.Application.Admin.Departments.Queries.GetDepartmentById
 {
@@ -31,7 +32,10 @@ namespace SchoolManagementSystem.Application.Admin.Departments.Queries.GetDepart
                 .ProjectTo<DepartmentDto>(mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
 
-            return ResponseDto<DepartmentDto>.Success(department, "Departments retrieved successfully");
+            if (department == null)
+                return ResponseDto<DepartmentDto>.Error(ErrorCode.NotFound, $"No department with id {request.Id} found");
+
+            return ResponseDto<DepartmentDto>.Success(department, $"Department with id {request.Id} retrieved successfully");
         }
     }
 }

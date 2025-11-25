@@ -11,6 +11,7 @@ using SchoolManagementSystem.Domain.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper.QueryableExtensions;
+using SchoolManagementSystem.Domain.Enums;
 
 namespace SchoolManagementSystem.Application.Admin.Departments.Queries.GetAllDepartments
 {
@@ -26,10 +27,14 @@ namespace SchoolManagementSystem.Application.Admin.Departments.Queries.GetAllDep
         }
         public async Task<ResponseDto<List<DepartmentDto>>> Handle(GetAllDepartmentsQuery request, CancellationToken cancellationToken)
         {
+            
             var departments = await repository
                 .GetAll()
                 .ProjectTo<DepartmentDto>(mapper.ConfigurationProvider)
                 .ToListAsync();
+
+            if (departments.Count == 0)
+                return ResponseDto<List<DepartmentDto>>.Error(ErrorCode.NotFound, "No department found");
 
             return ResponseDto<List<DepartmentDto>>.Success(departments, "Departments retrieved successfully");
         }

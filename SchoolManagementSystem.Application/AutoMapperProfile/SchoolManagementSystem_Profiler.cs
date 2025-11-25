@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SchoolManagementSystem.Application.Admin.Departments.Commands.CreateDepartment;
+using SchoolManagementSystem.Application.DTOs.Course;
 using SchoolManagementSystem.Application.DTOs.Department;
 using SchoolManagementSystem.Domain.Models;
 using System;
@@ -17,12 +18,19 @@ namespace SchoolManagementSystem.Application.AutoMapperProfile
 
             #region Department
             CreateMap<CreateDepartmentDto, Department>().ReverseMap();
-            CreateMap<UpdateDepartmentDto, Department>().ReverseMap();
             CreateMap<DepartmentDto, Department>().ReverseMap();
-            CreateMap<Course, CourseMiniDto>().ReverseMap(); 
+            CreateMap<Course, CourseMiniDto>().ReverseMap();
+            CreateMap<UpdateDepartmentDto, Department>()
+                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             #endregion
 
-
+            #region Course
+            CreateMap<CreateCourseDto, Course>().ReverseMap();
+            CreateMap<CourseDto, Course>().ReverseMap();
+            CreateMap<ClassMiniDto, Class>().ReverseMap();
+            CreateMap<UpdateCourseDto, Course>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));     
+            #endregion
         }
     }
 }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Admin.Departments.Commands.CreateDepartment
 {
-    class CreateDepartmentValidator:AbstractValidator<CreateDepartmentCommand>
+    public class CreateDepartmentValidator:AbstractValidator<CreateDepartmentCommand>
     {
 
         public CreateDepartmentValidator(IGenericRepository<Department> departmentRepository, IGenericRepository<Teacher> teacherRepository)
@@ -20,7 +20,7 @@ namespace SchoolManagementSystem.Application.Admin.Departments.Commands.CreateDe
                 .MustAsync(async (name, cancellation) =>
                 {
                     var exists = await departmentRepository
-                    .GetFiltered(deptName => deptName.Name == name, trached: false)
+                    .GetFiltered(deptName => deptName.Name == name, tracked: false)
                     .AnyAsync(cancellation);
                     return !exists ;
 

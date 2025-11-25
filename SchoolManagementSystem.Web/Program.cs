@@ -16,6 +16,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using MediatR;
+
 
 namespace SchoolManagementSystem.Web
 {
@@ -28,15 +32,6 @@ namespace SchoolManagementSystem.Web
             // Add services to the container.
 
             builder.Services.AddControllers();
-
-            builder.Services.AddMediatR(cfg =>
-            {
-                cfg.RegisterServicesFromAssembly(typeof(RegisterCommandHandler).Assembly);
-            });
-
-            builder.Services.AddAutoMapper(typeof(SchoolManagementSystem_Profiler).Assembly);
-
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -55,29 +50,41 @@ namespace SchoolManagementSystem.Web
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
 
-             .AddJwtBearer(options =>
-             {
-                 options.SaveToken = true;
-                 options.RequireHttpsMetadata = false;
-                 options.TokenValidationParameters = new TokenValidationParameters
-                 {
-                     ValidateIssuer = true,
-                     ValidIssuer = builder.Configuration["JWT:Iss"],
-                     ValidateAudience = true,
-                     ValidAudience = builder.Configuration["JWT:Aud"],
-                     ValidateLifetime = true,
-                     ValidateIssuerSigningKey = true,
-                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
-                     RoleClaimType = ClaimTypes.Role,
-                 };
-             });
+           .AddJwtBearer(options =>
+           {
+               options.SaveToken = true;
+               options.RequireHttpsMetadata = false;
+               options.TokenValidationParameters = new TokenValidationParameters
+               {
+                   ValidateIssuer = true,
+                   ValidIssuer = builder.Configuration["JWT:Iss"],
+                   ValidateAudience = true,
+                   ValidAudience = builder.Configuration["JWT:Aud"],
+                   ValidateLifetime = true,
+                   ValidateIssuerSigningKey = true,
+                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
+                   RoleClaimType = ClaimTypes.Role,
+               };
+           });
 
-            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
-            //builder.Services.AddValidatorsFromAssembly(SchoolManagementSystem.Application.AssemblyReference.Assembly,
-            //  includeInternalTypes: true);
+          builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
-            //builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+          builder.Services.AddAutoMapper(typeof(SchoolManagementSystem_Profiler).Assembly);
+
+
+            builder.Services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(typeof(RegisterCommandHandler).Assembly);
+            });
+
+            builder.Services.AddFluentValidationAutoValidation();
+            builder.Services.AddFluentValidationClientsideAdapters();
+            builder.Services.AddValidatorsFromAssembly(SchoolManagementSystem.Application.AssemblyReference.Assembly,
+              includeInternalTypes: true);
+            builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             var app = builder.Build();
 

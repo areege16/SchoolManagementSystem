@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 namespace SchoolManagementSystem.Application.Account.Commands
 {
 
-    public class LoginCommand : IRequest<ResponseDto<LoginDto>>
+    public class LoginCommand : IRequest<ResponseDto<LoginDto>> //TODO Revisit and make Validation
     {
         public string UserName { get; set; }
         public string Password { get; set; }

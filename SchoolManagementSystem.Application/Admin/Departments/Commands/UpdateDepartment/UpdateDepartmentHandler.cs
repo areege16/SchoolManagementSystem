@@ -26,7 +26,11 @@ namespace SchoolManagementSystem.Application.Admin.Departments.Commands.UpdateDe
         {
             try
             {
-                var department = mapper.Map<Department>(request.DepartmentDto);
+                var department = repository.GetByID(request.DepartmentDto.Id);
+                if (department == null)
+                    return ResponseDto<bool>.Error(ErrorCode.NotFound, "Department not found");
+
+                mapper.Map(request.DepartmentDto, department);
                 repository.Update(department);
                 await repository.SaveChangesAsync();
 

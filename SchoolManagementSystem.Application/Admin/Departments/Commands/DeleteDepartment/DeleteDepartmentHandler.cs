@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Domain.Enums;
 using SchoolManagementSystem.Domain.Models;
@@ -13,24 +14,41 @@ namespace SchoolManagementSystem.Application.Admin.Departments.Commands.DeleteDe
 {
     class DeleteDepartmentHandler : IRequestHandler<DeleteDepartmentCommand, ResponseDto<bool>>
     {
-        private readonly IGenericRepository<Department> repository;
+        private readonly IGenericRepository<Department> departmentRepository;
+        private readonly IGenericRepository<Course> courseRepository;
 
-        public DeleteDepartmentHandler(IGenericRepository<Department> repository)
+        public DeleteDepartmentHandler(IGenericRepository<Department> departmentRepository,IGenericRepository<Course> courseRepository)
         {
-            this.repository = repository;
+            this.departmentRepository = departmentRepository;
+            this.courseRepository = courseRepository;
         }
         public async Task<ResponseDto<bool>> Handle(DeleteDepartmentCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                repository.Remove(request.Id);
-                await repository.SaveChangesAsync();
+                var department = departmentRepository.
+                   GetAll()
+                  .Where(d => d.Id == request.Id)
+                  .Include(d=>d.Courses)
+                  .FirstOrDefault();
 
-                return ResponseDto<bool>.Success(true, "Department deleted successfully");
+                if(department==null)
+                    return ResponseDto<bool>.Error(ErrorCode.NotFound, $"Department with id {request.Id} not found");
+
+                if (department.Courses != null && department.Courses.Count > 0)
+                {
+                    courseRepository.RemoveRange(department.Courses);
+                    await courseRepository.SaveChangesAsync();
+                }
+
+                departmentRepository.Remove(request.Id);
+                await departmentRepository.SaveChangesAsync();
+
+                return ResponseDto<bool>.Success(true, $"Department with id {request.Id} deleted successfully");
             }
             catch(Exception ex)
             {
-                return ResponseDto<bool>.Error(ErrorCode.DatabaseError, $"Failed to create department{ex.Message}");
+                return ResponseDto<bool>.Error(ErrorCode.DatabaseError, $"Failed to delete department{ex.Message}");
             }
 
         }

@@ -12,7 +12,9 @@ using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Account.Commands
 {
-    public class RegisterCommand:IRequest<ResponseDto<bool>>
+    public class RegisterCommand:IRequest<ResponseDto<bool>> //TODO Revisit 
+                                                             //separate handler and command
+                                                             //Create linked domain entity (Teacher/Student/Admin) after user registration
     {
         public RegisterDto UserFormConsumer { get; set; }
     }
