@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.DTOs.Course
 {
-   public class UpdateCourseDto
+   public class UpdateCourseDto 
     {
         public int Id { get; set; }
         public string? Name { get; set; }
@@ -14,5 +14,6 @@ namespace SchoolManagementSystem.Application.DTOs.Course
         public string? Description { set; get; }
         public int? Credits { get; set; }
         public int? DepartmentId { get; set; }
+        public DateTime UpdatedDate { get; set; }
     }
 }

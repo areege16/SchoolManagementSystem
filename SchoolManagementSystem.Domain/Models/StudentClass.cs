@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Domain.Models
 {
-    public class StudentClass //TODO add BaseEntity
+    public class StudentClass 
     {
         public int Id { set; get; }
         public DateTime EnrollmentDate { set; get; }

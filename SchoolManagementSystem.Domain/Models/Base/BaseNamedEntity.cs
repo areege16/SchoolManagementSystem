@@ -9,6 +9,6 @@ namespace SchoolManagementSystem.Domain.Models.Base
     public class BaseNamedEntity:BaseEntity
     {
         public string Name { get; set; }
-        public DateTime UpdatedDate { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedDate { get; set; } = DateTime.UtcNow; //TODO remove default value 
     }
 }

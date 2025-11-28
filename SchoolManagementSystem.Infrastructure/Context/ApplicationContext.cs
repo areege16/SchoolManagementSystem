@@ -29,7 +29,13 @@ namespace SchoolManagementSystem.Infrastructure.Context
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-       
+
+            modelBuilder.Entity<Class>()
+              .Property(c => c.IsActive)
+              .HasDefaultValue(true);
+
+            modelBuilder.Entity<Class>().HasQueryFilter(i => i.IsActive);
+
             base.OnModelCreating(modelBuilder);
         }
     }

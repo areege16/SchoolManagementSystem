@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SchoolManagementSystem.Application.Admin.Departments.Commands.CreateDepartment;
+using SchoolManagementSystem.Application.DTOs.Class;
 using SchoolManagementSystem.Application.DTOs.Course;
 using SchoolManagementSystem.Application.DTOs.Department;
 using SchoolManagementSystem.Domain.Models;
@@ -15,10 +16,9 @@ namespace SchoolManagementSystem.Application.AutoMapperProfile
     {
         public SchoolManagementSystem_Profiler()
         {
-
             #region Department
             CreateMap<CreateDepartmentDto, Department>().ReverseMap();
-            CreateMap<DepartmentDto, Department>().ReverseMap();
+            CreateMap<Department, DepartmentDto>().ReverseMap();
             CreateMap<Course, CourseMiniDto>().ReverseMap();
             CreateMap<UpdateDepartmentDto, Department>()
                  .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
@@ -26,10 +26,21 @@ namespace SchoolManagementSystem.Application.AutoMapperProfile
 
             #region Course
             CreateMap<CreateCourseDto, Course>().ReverseMap();
-            CreateMap<CourseDto, Course>().ReverseMap();
-            CreateMap<ClassMiniDto, Class>().ReverseMap();
+            CreateMap<Course,CourseDto>().ReverseMap();
+            CreateMap<Class, ClassMiniDto>().ReverseMap();
             CreateMap<UpdateCourseDto, Course>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));     
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            #endregion
+
+            #region Class
+            CreateMap<CreateClassDto, Class>().ReverseMap();
+            CreateMap<Class , ClassDto>()
+                .ForMember(dest => dest.StudentsInClass,
+                  opt => opt.MapFrom(src => src.StudentClasses)); 
+            CreateMap<StudentClass, StudentsInClassDto>().ReverseMap();
+            CreateMap<UpdateClassDto, Class>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)); 
+            CreateMap<AssignStudentToClassDto, StudentClass>().ReverseMap();           
             #endregion
         }
     }

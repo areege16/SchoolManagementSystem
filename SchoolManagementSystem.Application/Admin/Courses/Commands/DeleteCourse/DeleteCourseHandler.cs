@@ -36,6 +36,8 @@ namespace SchoolManagementSystem.Application.Admin.Courses.Commands.DeleteCourse
                     classRepository.RemoveRange(course.Classes);
                     await classRepository.SaveChangesAsync();
                 }
+
+
                 courseRepository.Remove(request.Id);
                 await courseRepository.SaveChangesAsync();
 

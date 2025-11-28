@@ -27,18 +27,18 @@ namespace SchoolManagementSystem.Web.Controllers.Admin
 
         #region CreateNewDepartment
         [HttpPost]
-        public async Task<IActionResult> CreateDepartment(CreateDepartmentDto createDepartmentDto)
+        public async Task<IActionResult> CreateDepartment(CreateDepartmentDto departmentDto)
         {
             var result = await mediator.Send(new CreateDepartmentCommand
             {
-                DepartmentDto = createDepartmentDto
+                DepartmentDto = departmentDto
             });
             return Ok(result);
         }
         #endregion
 
         #region DeleteDepartment
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDepartment(int id)
         {
             var result = await mediator.Send(new DeleteDepartmentCommand { Id = id });
@@ -47,20 +47,20 @@ namespace SchoolManagementSystem.Web.Controllers.Admin
         #endregion
 
         #region UpdatedDepartment
-        [HttpPut]
-        public async Task<IActionResult> UpdateDepartment(int id, UpdateDepartmentDto updateDepartmentDto)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateDepartment(int id, UpdateDepartmentDto departmentDto)
         {
-            updateDepartmentDto.Id = id;
+            departmentDto.Id = id;
             var result = await mediator.Send(new UpdateDepartmentCommand
             {
-                DepartmentDto = updateDepartmentDto
+                DepartmentDto = departmentDto
             });
             return Ok(result);
         }
         #endregion
 
         #region GetAllDepartments
-        [HttpGet("GetAllDepartments")]
+        [HttpGet]
         public async Task<IActionResult> GetAllDepartments()
         {
             var result = await mediator.Send(new GetAllDepartmentsQuery());
@@ -69,10 +69,12 @@ namespace SchoolManagementSystem.Web.Controllers.Admin
         #endregion
 
         #region GetDepartmentById
-        [HttpGet("GetDepartmentById")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetDepartmentById(int id)
         {
-            var result = await mediator.Send(new GetDepartmentByIdQuery { Id = id });
+            var result = await mediator.Send(new GetDepartmentByIdQuery { 
+                Id = id 
+            });
             return Ok(result);
         } 
         #endregion

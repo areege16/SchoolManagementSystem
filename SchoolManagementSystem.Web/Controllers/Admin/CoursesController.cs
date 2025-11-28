@@ -37,7 +37,7 @@ namespace SchoolManagementSystem.Web.Controllers.Admin
         #endregion
 
         #region DeleteCourse
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCourse(int id)
         {
             var result = await mediator.Send(new DeleteCourseCommand
@@ -49,7 +49,7 @@ namespace SchoolManagementSystem.Web.Controllers.Admin
         #endregion
 
         #region GetAllCourses
-        [HttpGet("GetAllCourses")]
+        [HttpGet]
         public async Task<IActionResult> GetAllCourses()
         {
             var result = await mediator.Send(new GetAllCoursesQuery());
@@ -58,7 +58,7 @@ namespace SchoolManagementSystem.Web.Controllers.Admin
         #endregion
 
         #region GetCourseById
-        [HttpGet("GetCourseById")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetCourseById(int id)
         {
             var result = await mediator.Send(new GetACourseByIdQuery{
@@ -69,7 +69,7 @@ namespace SchoolManagementSystem.Web.Controllers.Admin
         #endregion
 
         #region UpdateCourse
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCourse(int id , UpdateCourseDto courseDto)
         {
             courseDto.Id = id;

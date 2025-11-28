@@ -11,11 +11,10 @@ namespace SchoolManagementSystem.Domain.Models
 {
     public class Class: BaseNamedEntity
     {
-      
-        public bool IsActive { set; get; }
+        public bool IsActive { set; get; } = true;
         public Semester Semester { set; get; }
-        public DateTime StartDate { set; get; }
-        public DateTime EndDate { set; get; }
+        public DateOnly StartDate { set; get; }
+        public DateOnly EndDate { set; get; }
 
         [ForeignKey("Course")]
         public int CourseId { set; get; }
@@ -25,10 +24,9 @@ namespace SchoolManagementSystem.Domain.Models
         public string TeacherId { get; set; }
         public Teacher Teacher { get; set; }
 
-        public ICollection<StudentClass> studentClasses { get; set; }
+        public ICollection<StudentClass> StudentClasses { get; set; }
         public ICollection<Attendance> Attendances { get; set; }
         public ICollection<Assignment>? Assignments { get; set; }
-
 
     }
 }
