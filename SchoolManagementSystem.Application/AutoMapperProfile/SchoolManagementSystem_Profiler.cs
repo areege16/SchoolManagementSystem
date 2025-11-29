@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SchoolManagementSystem.Application.Admin.Departments.Commands.CreateDepartment;
+using SchoolManagementSystem.Application.DTOs.Attendance;
 using SchoolManagementSystem.Application.DTOs.Class;
 using SchoolManagementSystem.Application.DTOs.Course;
 using SchoolManagementSystem.Application.DTOs.Department;
@@ -40,7 +41,14 @@ namespace SchoolManagementSystem.Application.AutoMapperProfile
             CreateMap<StudentClass, StudentsInClassDto>().ReverseMap();
             CreateMap<UpdateClassDto, Class>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)); 
-            CreateMap<AssignStudentToClassDto, StudentClass>().ReverseMap();           
+            CreateMap<AssignStudentToClassDto, StudentClass>().ReverseMap();
+            #endregion
+
+            #region Attendance
+            CreateMap<MarkAttendanceDto, Attendance>();
+            CreateMap<Attendance, AttendanceHistoryDto>()
+                .ForMember(dest => dest.StudentName,
+                 opt => opt.MapFrom(src => src.Student.ApplicationUser.Name));
             #endregion
         }
     }

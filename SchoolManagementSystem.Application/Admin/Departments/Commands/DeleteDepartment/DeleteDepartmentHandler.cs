@@ -26,9 +26,8 @@ namespace SchoolManagementSystem.Application.Admin.Departments.Commands.DeleteDe
         {
             try
             {
-                var department = departmentRepository.
-                   GetAll()
-                  .Where(d => d.Id == request.Id)
+                var department = departmentRepository
+                  .GetFiltered(d => d.Id == request.Id,tracked:true)
                   .Include(d=>d.Courses)
                   .FirstOrDefault();
 

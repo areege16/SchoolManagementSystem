@@ -22,9 +22,8 @@ namespace SchoolManagementSystem.Application.Admin.Courses.Commands.DeleteCourse
         { 
             try
             {        
-                var course = courseRepository.
-                   GetAll()
-                  .Where(d => d.Id == request.Id)
+                var course = courseRepository
+                  .GetFiltered(d => d.Id == request.Id,tracked:true)
                   .Include(d => d.Classes)
                   .FirstOrDefault();
 
@@ -36,7 +35,6 @@ namespace SchoolManagementSystem.Application.Admin.Courses.Commands.DeleteCourse
                     classRepository.RemoveRange(course.Classes);
                     await classRepository.SaveChangesAsync();
                 }
-
 
                 courseRepository.Remove(request.Id);
                 await courseRepository.SaveChangesAsync();

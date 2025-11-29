@@ -27,7 +27,7 @@ namespace SchoolManagementSystem.Web.RepositoryImplementation
         }
         public IQueryable<T> GetAll()
         {
-            return context.Set<T>();
+            return context.Set<T>().AsNoTracking();
         }
 
         public T GetByID(int id)
