@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using SchoolManagementSystem.Application.DTOs.Attendance;
 using SchoolManagementSystem.Application.DTOs;
 using System;
 using System.Collections.Generic;
@@ -14,10 +13,11 @@ using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Application.DTOs.Department;
 using SchoolManagementSystem.Domain.Enums;
 using Azure.Core;
+using SchoolManagementSystem.Application.DTOs.Attendance.Teacher;
 
 namespace SchoolManagementSystem.Application.Teachers.Attendances.Queries.GetAttendanceHistory
 {
-    public class GetAttendanceHistoryHandler : IRequestHandler<GetAttendanceHistoryCommand, ResponseDto<List<AttendanceHistoryDto>>>
+    public class GetAttendanceHistoryHandler : IRequestHandler<GetAttendanceHistoryCommand, ResponseDto<List<AttendanceHistoryDto>>>//TODO : Change response to be grouped by Date instead of flat list.
     {
         private readonly IGenericRepository<Attendance> repository;
         private readonly IMapper mapper;

@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using SchoolManagementSystem.Application.DTOs;
-using SchoolManagementSystem.Application.DTOs.Attendance;
+using SchoolManagementSystem.Application.DTOs.Attendance.Teacher;
 using System;
 using System.Collections.Generic;
 using System.Linq;

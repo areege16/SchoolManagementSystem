@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolManagementSystem.Application.DTOs.Attendance
+namespace SchoolManagementSystem.Application.DTOs.Attendance.Teacher
 {
     public class MarkAttendanceDto
     {

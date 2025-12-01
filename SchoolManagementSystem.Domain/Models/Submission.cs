@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Domain.Models
 {
-    public class Submission //TODO add BaseEntity
+    public class Submission 
     {
         public int Id { get; set; }
         public DateTime SubmittedDate { get; set; }
@@ -27,7 +27,7 @@ namespace SchoolManagementSystem.Domain.Models
 
 
         [ForeignKey("GradedByTeacher")]
-        public string GradedByTeacherId { get; set; }
+        public string? GradedByTeacherId { get; set; }
         public Teacher GradedByTeacher { get; set; }
      
     }

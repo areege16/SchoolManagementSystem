@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SchoolManagementSystem.Application.DTOs.Attendance;
+using SchoolManagementSystem.Application.DTOs.Attendance.Teacher;
 using SchoolManagementSystem.Application.Teachers.Attendances.Commands.MarkAttendance;
 using SchoolManagementSystem.Application.Teachers.Attendances.Queries.GetAttendanceHistory;
 using System.Threading.Tasks;
