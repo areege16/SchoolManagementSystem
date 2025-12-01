@@ -49,44 +49,45 @@
 ## Sample API Requests
 
 ### 1. Login (Account)
-POST https://localhost:7058/api/Account/login
-Headers:
+**POST** `https://localhost:7058/api/Account/login`  
+**Headers:**  
 Content-Type: application/json
-Body (raw JSON):
+**Body (raw JSON):**  
+```json
 {
   "userName": "string",
   "password": "string"
 }
 
-### 2. Submit Assignment (Student)
+2. Submit Assignment (Student)
 POST /api/student/assignments/{id}/submit
 Headers:
 Authorization: Bearer <token>
-Body (form-data):
 File: <select file>
 AssignmentId: <assignment id>
 
-### 3. Get All Classes
+
+3. Get All Classes
 GET https://localhost:7058/api/Classes/GetAllClasses
 Headers:
 Authorization: Bearer <token>
 
-### 4. View Enrolled Classes (Student)
+4. View Enrolled Classes (Student)
 GET /api/student/classes
 Headers:
 Authorization: Bearer <token>
 
-### 5. View Attendance (Student)
+5. View Attendance (Student)
 GET /api/student/attendance
 Headers:
 Authorization: Bearer <token>
 
-### 6. View Grades (Student)
+6. View Grades (Student)
 GET /api/student/grades
 Headers:
 Authorization: Bearer <token>
 
-### 7. Create Assignment (Teacher)
+7. Create Assignment (Teacher)
 POST /api/teacher/assignments
 Headers:
 Authorization: Bearer <token>
@@ -101,7 +102,7 @@ Body (raw JSON):
   "createdDate": "2025-12-01T22:45:31.276Z"
 }
 
-### 8. Grade Student Submission (Teacher)
+ 8. Grade Student Submission (Teacher)
 POST /api/teacher/assignments/{id}/grade
 Headers:
 Authorization: Bearer <token>
@@ -115,7 +116,7 @@ Body (raw JSON):
   "remarks": "string"
 }
 
-### 9. Create Department (Admin)
+9. Create Department (Admin)
 POST /api/Classes
 Headers:
 Authorization: Bearer <token>
@@ -131,23 +132,7 @@ Body (raw JSON):
   "teacherId": "string"
 }
 
-### 10. Create Department (Admin)
+10. Create Department (Admin)
 Get /api/Departments
 Headers:
 Authorization: Bearer <token>
-
-
-
-
-
-      
-
-
-
-
-
-   
-
-2ز   
-
-   
