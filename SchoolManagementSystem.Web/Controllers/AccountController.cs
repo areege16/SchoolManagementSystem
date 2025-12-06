@@ -1,7 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SchoolManagementSystem.Application.Account.Commands;
+using SchoolManagementSystem.Application.Account.Commands.Login;
+using SchoolManagementSystem.Application.Account.Commands.Register;
 using SchoolManagementSystem.Application.DTOs.Account;
 
 namespace SchoolManagementSystem.Web.Controllers
@@ -22,7 +23,7 @@ namespace SchoolManagementSystem.Web.Controllers
         {
             var result = await mediator.Send(new RegisterCommand
             {
-                UserFormConsumer = registerDto
+                RegisterDto = registerDto
             });
             return Ok(result);
         }
@@ -30,9 +31,12 @@ namespace SchoolManagementSystem.Web.Controllers
 
         #region Login
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginCommand command) //TODO use dto instead of command 
+        public async Task<IActionResult> Login(LoginDto loginDto)
         {
-            var result = await mediator.Send(command);
+            var result = await mediator.Send(new LoginCommand
+            {
+                LoginDto = loginDto
+            });
             return Ok(result);
         }
         #endregion

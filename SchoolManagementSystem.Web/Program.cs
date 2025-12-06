@@ -8,7 +8,6 @@ using SchoolManagementSystem.Infrastructure.Context;
 using SchoolManagementSystem.Web.Seed;
 using SchoolManagementSystem.Application;
 using System.Reflection;
-using SchoolManagementSystem.Application.Validations.Account;
 using SchoolManagementSystem.Domain.RepositoryContract;
 using SchoolManagementSystem.Web.RepositoryImplementation;
 using SchoolManagementSystem.Application.AutoMapperProfile;
@@ -19,6 +18,7 @@ using System.Security.Claims;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
+using SchoolManagementSystem.Application.Account.Commands.Register;
 
 
 namespace SchoolManagementSystem.Web
@@ -67,7 +67,6 @@ namespace SchoolManagementSystem.Web
                };
            });
 
-
           builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
           builder.Services.AddAutoMapper(typeof(SchoolManagementSystem_Profiler).Assembly);
@@ -75,7 +74,7 @@ namespace SchoolManagementSystem.Web
 
             builder.Services.AddMediatR(cfg =>
             {
-                cfg.RegisterServicesFromAssembly(typeof(RegisterCommandHandler).Assembly);
+                cfg.RegisterServicesFromAssembly(typeof(RegisterHandler).Assembly);
             });
 
             builder.Services.AddFluentValidationAutoValidation();

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using SchoolManagementSystem.Application.Account;
 using SchoolManagementSystem.Domain.Models;
 
 namespace SchoolManagementSystem.Web.Seed
@@ -9,7 +10,7 @@ namespace SchoolManagementSystem.Web.Seed
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
 
-            var roles = new[] { "Admin", "Teacher", "Student" };
+            var roles = Roles.AllowedRoles;
 
             foreach (var role in roles)
             {

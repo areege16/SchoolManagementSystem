@@ -1,51 +1,43 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.DTOs.Account;
-using SchoolManagementSystem.Domain.Enums;
-using SchoolManagementSystem.Domain.Models;
+using SchoolManagementSystem.Application.DTOs;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using SchoolManagementSystem.Domain.Models;
+using Microsoft.IdentityModel.Tokens;
+using SchoolManagementSystem.Domain.Enums;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
-namespace SchoolManagementSystem.Application.Account.Commands
+namespace SchoolManagementSystem.Application.Account.Commands.Login
 {
-
-    public class LoginCommand : IRequest<ResponseDto<LoginDto>> //TODO Revisit and make Validation
-    {
-        public string UserName { get; set; }
-        public string Password { get; set; }
-    }
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, ResponseDto<LoginDto>>
+    class LoginHandler : IRequestHandler<LoginCommand, ResponseDto<LoginResponseDto>>
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IConfiguration configur;
 
-        public LoginCommandHandler(UserManager<ApplicationUser> userManager, IConfiguration configur)
+        public LoginHandler(UserManager<ApplicationUser> userManager, IConfiguration configur)
         {
             this.userManager = userManager;
             this.configur = configur;
         }
-        async Task<ResponseDto<LoginDto>> IRequestHandler<LoginCommand, ResponseDto<LoginDto>>.Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseDto<LoginResponseDto>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            ApplicationUser user = await userManager.FindByNameAsync(request.UserName);
+
+            ApplicationUser user = await userManager.FindByNameAsync(request.LoginDto.UserName);
 
             if (user == null)
-                return ResponseDto<LoginDto>.Error(ErrorCode.NotFound, "User not found");
+                return ResponseDto<LoginResponseDto>.Error(ErrorCode.NotFound, "User not found");
 
-
-            bool isPasswordCorrect = await userManager.CheckPasswordAsync(user, request.Password);
+            bool isPasswordCorrect = await userManager.CheckPasswordAsync(user, request.LoginDto.Password);
 
             if (!isPasswordCorrect)
-                return ResponseDto<LoginDto>.Error(ErrorCode.Unauthorized, "Invalid username or password");
-
+                return ResponseDto<LoginResponseDto>.Error(ErrorCode.Unauthorized, "Invalid username or password");
 
             var userRoles = await userManager.GetRolesAsync(user);
 
@@ -53,7 +45,6 @@ namespace SchoolManagementSystem.Application.Account.Commands
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
             claims.Add(new Claim(ClaimTypes.Name, user.UserName));
             claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-
 
             foreach (var role in userRoles)
             {
@@ -77,7 +68,7 @@ namespace SchoolManagementSystem.Application.Account.Commands
 
             string generatedToken = new JwtSecurityTokenHandler().WriteToken(token);
 
-            var loginDto = new LoginDto
+            var loginDto = new LoginResponseDto
             {
                 UserName = user.UserName,
                 Name = user.Name,
@@ -86,12 +77,7 @@ namespace SchoolManagementSystem.Application.Account.Commands
                 ExpireAt = expiresAt
             };
 
-            return ResponseDto<LoginDto>.Success(loginDto, "Login successful");
+            return ResponseDto<LoginResponseDto>.Success(loginDto, "Login successful");
         }
     }
 }
-
-
-
-
-
