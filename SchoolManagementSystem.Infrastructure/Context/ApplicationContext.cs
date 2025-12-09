@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Infrastructure.Context
 {
-    public class ApplicationContext: IdentityDbContext<ApplicationUser,ApplicationRole,string>
+    public class ApplicationContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
-        public ApplicationContext(DbContextOptions<ApplicationContext> options):base(options)
-        {        
+        public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
+        {
         }
 
         public DbSet<Assignment> Assignments { get; set; }
@@ -26,8 +26,9 @@ namespace SchoolManagementSystem.Infrastructure.Context
         public DbSet<StudentClass> StudentClasses { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
-    
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
             modelBuilder.Entity<Class>()
@@ -35,6 +36,12 @@ namespace SchoolManagementSystem.Infrastructure.Context
               .HasDefaultValue(true);
 
             modelBuilder.Entity<Class>().HasQueryFilter(i => i.IsActive);
+
+            modelBuilder.Entity<RefreshToken>()
+              .HasOne(rt => rt.ApplicationUser)
+              .WithMany(u => u.RefreshTokens)
+              .HasForeignKey(rt => rt.UserId)
+              .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
         }

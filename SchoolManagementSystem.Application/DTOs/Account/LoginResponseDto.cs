@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SchoolManagementSystem.Application.DTOs.Account
+﻿namespace SchoolManagementSystem.Application.DTOs.Account
 {
     public class LoginResponseDto
     {
@@ -12,7 +6,7 @@ namespace SchoolManagementSystem.Application.DTOs.Account
         public string Name { get; set; }
         public string Role { get; set; }
         public string Token { get; set; }
-        public DateTime ExpireAt { get; set; }
-
+        public string RefreshToken { get; set; }
+        public DateTime AccessTokenExpiresAt { get; set; }
     }
 }

@@ -2,12 +2,13 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.Application.Account.Commands.Login;
+using SchoolManagementSystem.Application.Account.Commands.RefreshToken;
 using SchoolManagementSystem.Application.Account.Commands.Register;
 using SchoolManagementSystem.Application.DTOs.Account;
 
 namespace SchoolManagementSystem.Web.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auth/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -36,6 +37,18 @@ namespace SchoolManagementSystem.Web.Controllers
             var result = await mediator.Send(new LoginCommand
             {
                 LoginDto = loginDto
+            });
+            return Ok(result);
+        }
+        #endregion
+
+        #region RefreshToken
+        [HttpPost("RefreshToken")]
+        public async Task<IActionResult> RefreshToken(RefreshTokenRequestDto refreshTokenRequestDto)
+        {
+            var result = await mediator.Send(new RefreshTokenCommand
+            {
+                RefreshTokenRequestDto = refreshTokenRequestDto
             });
             return Ok(result);
         }

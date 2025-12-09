@@ -19,6 +19,8 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using SchoolManagementSystem.Application.Account.Commands.Register;
+using SchoolManagementSystem.Application.Services.TokenService;
+using SchoolManagementSystem.Application.Settings;
 
 
 namespace SchoolManagementSystem.Web
@@ -57,9 +59,9 @@ namespace SchoolManagementSystem.Web
                options.TokenValidationParameters = new TokenValidationParameters
                {
                    ValidateIssuer = true,
-                   ValidIssuer = builder.Configuration["JWT:Iss"],
+                   ValidIssuer = builder.Configuration["JWT:Issuer"],
                    ValidateAudience = true,
-                   ValidAudience = builder.Configuration["JWT:Aud"],
+                   ValidAudience = builder.Configuration["JWT:Audience"],
                    ValidateLifetime = true,
                    ValidateIssuerSigningKey = true,
                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
@@ -67,10 +69,11 @@ namespace SchoolManagementSystem.Web
                };
            });
 
-          builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddSingleton<ITokenService, TokenService>();
+            builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JWT"));
 
-          builder.Services.AddAutoMapper(typeof(SchoolManagementSystem_Profiler).Assembly);
-
+            builder.Services.AddAutoMapper(typeof(SchoolManagementSystem_Profiler).Assembly);
 
             builder.Services.AddMediatR(cfg =>
             {
@@ -103,7 +106,6 @@ namespace SchoolManagementSystem.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 
