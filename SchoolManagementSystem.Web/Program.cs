@@ -71,7 +71,10 @@ namespace SchoolManagementSystem.Web
 
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddSingleton<ITokenService, TokenService>();
+            builder.Services.AddMemoryCache();
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JWT"));
+            builder.Services.Configure<CacheSettings>(builder.Configuration.GetSection("CacheSettings"));
+
 
             builder.Services.AddAutoMapper(typeof(SchoolManagementSystem_Profiler).Assembly);
 

@@ -1,17 +1,15 @@
 ﻿using MediatR;
 using SchoolManagementSystem.Application.DTOs.Department;
 using SchoolManagementSystem.Application.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SchoolManagementSystem.Domain.RepositoryContract;
 using SchoolManagementSystem.Domain.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper.QueryableExtensions;
 using SchoolManagementSystem.Domain.Enums;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
+using SchoolManagementSystem.Application.Settings;
 
 namespace SchoolManagementSystem.Application.Admin.Departments.Queries.GetAllDepartments
 {
@@ -19,20 +17,33 @@ namespace SchoolManagementSystem.Application.Admin.Departments.Queries.GetAllDep
     {
         private readonly IGenericRepository<Department> repository;
         private readonly IMapper mapper;
+        private readonly IMemoryCache memoryCache;
+        private readonly IOptions<CacheSettings> cacheSettings;
 
-        public GetAllDepartmentsHandler(IGenericRepository<Department> repository, IMapper mapper )
+        public GetAllDepartmentsHandler(IGenericRepository<Department> repository,
+                                        IMapper mapper,
+                                        IMemoryCache memoryCache,
+                                        IOptions<CacheSettings> cacheSettings)
         {
             this.repository = repository;
             this.mapper = mapper;
+            this.memoryCache = memoryCache;
+            this.cacheSettings = cacheSettings;
         }
         public async Task<ResponseDto<List<DepartmentDto>>> Handle(GetAllDepartmentsQuery request, CancellationToken cancellationToken)
         {
-            
-            var departments = await repository
-                .GetAll()
-                .ProjectTo<DepartmentDto>(mapper.ConfigurationProvider)
-                .ToListAsync();
+            var departmentsKey = "Departments";
+            TimeSpan cacheExpiration = TimeSpan.FromMinutes(cacheSettings.Value.DepartmentsCacheExpirationMinutes);
 
+            if (!memoryCache.TryGetValue(departmentsKey, out List<DepartmentDto>? departments))
+            {
+                departments = await repository
+                    .GetAll()
+                    .ProjectTo<DepartmentDto>(mapper.ConfigurationProvider)
+                    .ToListAsync();
+
+                memoryCache.Set(departmentsKey, departments ?? new List<DepartmentDto>(), cacheExpiration);
+            }
             if (departments.Count == 0)
                 return ResponseDto<List<DepartmentDto>>.Error(ErrorCode.NotFound, "No department found");
 
