@@ -1,12 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.Application.DTOs.Assignment.Student;
 using SchoolManagementSystem.Application.Students.Assignments.Commands.SubmitAssignment;
 using SchoolManagementSystem.Application.Students.Assignments.Queries.GetStudentAssignments;
 using SchoolManagementSystem.Application.Students.Assignments.Queries.GetStudentGrades;
-using System.Threading.Tasks;
+using SchoolManagementSystem.Web.Extensions;
 
 namespace SchoolManagementSystem.Web.Controllers.StudentControllers
 {
@@ -21,13 +20,15 @@ namespace SchoolManagementSystem.Web.Controllers.StudentControllers
         {
             this.mediator = mediator;
         }
-        #region GetAssignments
+        #region GetStudentAssignments
         [HttpGet]
-        public async Task<IActionResult> GetAssignments()
+        public async Task<IActionResult> GetStudentAssignments()
         {
+            var studentId = User.GetUserId();
+
             var result = await mediator.Send(new GetStudentAssignmentsQuery
             {
-                User = User
+                StudentId = studentId,
             });
             return Ok(result);
         }
@@ -35,12 +36,13 @@ namespace SchoolManagementSystem.Web.Controllers.StudentControllers
 
         #region SubmitAssignment
         [HttpPost("{id}/submit")]
-        public async Task<IActionResult> SubmitAssignment(int id , [FromForm] SubmitAssignmentDto submitAssignmentDto)
+        public async Task<IActionResult> SubmitAssignment(int id, [FromForm] SubmitAssignmentDto submitAssignmentDto)
         {
+            var studentId = User.GetUserId();
             submitAssignmentDto.AssignmentId = id;
             var result = await mediator.Send(new SubmitAssignmentCommand
             {
-                User = User,
+                StudentId = studentId,
                 SubmitAssignmentDto = submitAssignmentDto
             });
             return Ok(result);
@@ -51,9 +53,10 @@ namespace SchoolManagementSystem.Web.Controllers.StudentControllers
         [HttpGet("grads")]
         public async Task<IActionResult> GetStudentGrades()
         {
+            var studentId = User.GetUserId();
             var result = await mediator.Send(new GetStudentGradesQuery
             {
-                User = User,
+                studentId = studentId,
             });
             return Ok(result);
         }

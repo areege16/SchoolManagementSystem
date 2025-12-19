@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using SchoolManagementSystem.Application.Admin.Departments.Commands.CreateDepartment;
 using SchoolManagementSystem.Application.DTOs.Assignment.Student;
 using SchoolManagementSystem.Application.DTOs.Assignment.Teacher;
 using SchoolManagementSystem.Application.DTOs.Attendance.Student;
@@ -8,15 +7,10 @@ using SchoolManagementSystem.Application.DTOs.Class;
 using SchoolManagementSystem.Application.DTOs.Course;
 using SchoolManagementSystem.Application.DTOs.Department;
 using SchoolManagementSystem.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.AutoMapperProfile
 {
-    public class SchoolManagementSystem_Profiler :Profile
+    public class SchoolManagementSystem_Profiler : Profile
     {
         public SchoolManagementSystem_Profiler()
         {
@@ -25,28 +19,34 @@ namespace SchoolManagementSystem.Application.AutoMapperProfile
             CreateMap<Department, DepartmentDto>().ReverseMap();
             CreateMap<Course, CourseMiniDto>().ReverseMap();
             CreateMap<UpdateDepartmentDto, Department>()
+                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                  .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             #endregion
 
             #region Course
             CreateMap<CreateCourseDto, Course>().ReverseMap();
-            CreateMap<Course,CourseDto>().ReverseMap();
+            CreateMap<Course, CourseDto>().ReverseMap();
             CreateMap<Class, ClassMiniDto>().ReverseMap();
             CreateMap<UpdateCourseDto, Course>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             #endregion
 
             #region Class
             CreateMap<CreateClassDto, Class>().ReverseMap();
-            CreateMap<Class , ClassDto>()
-                .ForMember(dest => dest.StudentsInClass,
-                  opt => opt.MapFrom(src => src.StudentClasses)); 
+            CreateMap<Class, ClassDto>()
+                .ForMember(dest => dest.StudentsInClass, opt => opt.MapFrom(src => src.StudentClasses));
+
             CreateMap<StudentClass, StudentsInClassDto>().ReverseMap();
+
             CreateMap<UpdateClassDto, Class>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)); 
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
             CreateMap<AssignStudentToClassDto, StudentClass>().ReverseMap();
+
             CreateMap<StudentClass, EnrolledClassDto>()
-                 .ForMember(dest => dest.ClassName, opt =>opt.MapFrom(src=>src.Class.Name))
+                 .ForMember(dest => dest.ClassName, opt => opt.MapFrom(src => src.Class.Name))
                  .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Class.Course.Name))
                  .ForMember(dest => dest.TeacherName, opt => opt.MapFrom(src => src.Class.Teacher.ApplicationUser.Name))
                  .ForMember(dest => dest.Semester, opt => opt.MapFrom(src => src.Class.Semester))
@@ -62,7 +62,7 @@ namespace SchoolManagementSystem.Application.AutoMapperProfile
             CreateMap<Attendance, GetStudentAttendanceDto>()
                 .ForMember(dest => dest.ClassName, opt => opt.MapFrom(src => src.Class.Name))
                 .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Class.Course.Name))
-                .ForMember(dest => dest.MarkedByTeacherName, opt => opt.MapFrom(src => src.Class.Teacher.ApplicationUser.Name));           
+                .ForMember(dest => dest.MarkedByTeacherName, opt => opt.MapFrom(src => src.Class.Teacher.ApplicationUser.Name));
             #endregion
 
             #region Assignment
@@ -74,7 +74,7 @@ namespace SchoolManagementSystem.Application.AutoMapperProfile
                 .ForMember(dest => dest.ClassName, opt => opt.MapFrom(src => src.Class.Name))
                 .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.Class.Course.Name))
                 .ForMember(dest => dest.CreatedByTeacherName, opt => opt.MapFrom(src => src.Class.Teacher.ApplicationUser.Name));
-            CreateMap<Submission,GetStudentGradeDto>()
+            CreateMap<Submission, GetStudentGradeDto>()
                 .ForMember(dest => dest.AssignmentTitle, opt => opt.MapFrom(src => src.Assignment.Title));
 
             #endregion

@@ -1,15 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SchoolManagementSystem.Application.DTOs;
-using SchoolManagementSystem.Application.DTOs.Class;
 using SchoolManagementSystem.Domain.Enums;
 using SchoolManagementSystem.Domain.Models;
 using SchoolManagementSystem.Domain.RepositoryContract;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Teachers.Classes.Commands.UpdateClass
 {
@@ -17,31 +13,59 @@ namespace SchoolManagementSystem.Application.Teachers.Classes.Commands.UpdateCla
     {
         private readonly IGenericRepository<Class> repository;
         private readonly IMapper mapper;
+        private readonly ILogger<UpdateClassHandler> logger;
 
-        public UpdateClassHandler(IGenericRepository<Class> repository,IMapper mapper)
+        public UpdateClassHandler(IGenericRepository<Class> repository,
+                                  IMapper mapper,
+                                  ILogger<UpdateClassHandler> logger)
         {
             this.repository = repository;
             this.mapper = mapper;
+            this.logger = logger;
         }
         public async Task<ResponseDto<bool>> Handle(UpdateClassCommand request, CancellationToken cancellationToken)
         {
+            var dto = request.ClassDto;
+            var teacherId = request.TeacherId;
             try
             {
-                var updateClass = repository.GetByID(request.ClassDto.Id);
-                if (updateClass == null)
-                    return ResponseDto<bool>.Error(ErrorCode.NotFound, "Class Not found");
+                logger.LogInformation("Teacher {TeacherId} attempting to update class with id: {ClassId}", request.TeacherId, dto.Id);
 
-                mapper.Map(request.ClassDto, updateClass);
-                repository.Update(updateClass);
-                await repository.SaveChangesAsync();
+                var classTeacherId = await repository
+                    .GetAllAsNoTracking()
+                    .Where(c => c.Id == dto.Id)
+                    .Select(c => c.TeacherId)
+                    .SingleOrDefaultAsync(cancellationToken);
+
+                if (classTeacherId != teacherId)
+                {
+                    logger.LogWarning("Teacher {TeacherId} is not authorized to update Class {ClassId} (Owner: {OwnerTeacherId}).", teacherId, dto.Id, classTeacherId);
+                    return ResponseDto<bool>.Error(ErrorCode.Unauthorized, "You are not authorized to update this class.");
+                }
+
+                var updateClass = await repository.FindByIdAsync(dto.Id, cancellationToken);
+
+                if (updateClass == null)
+                {
+                    logger.LogWarning("Teacher {TeacherId} tried to update non-existent class {ClassId}", request.TeacherId, dto.Id);
+                    return ResponseDto<bool>.Error(ErrorCode.NotFound, "Class Not found");
+                }
+
+                mapper.Map(dto, updateClass);
+                updateClass.UpdatedDate = DateTime.UtcNow;
+
+                await repository.SaveChangesAsync(cancellationToken);
+
+                logger.LogInformation("Teacher {TeacherId} successfully updated class {ClassId}", request.TeacherId, dto.Id);
 
                 return ResponseDto<bool>.Success(true, "Class Updated successfully");
             }
             catch (Exception ex)
             {
-                return ResponseDto<bool>.Error(ErrorCode.DatabaseError, $"Failed to update Class {ex.Message}");
-            }
-          }      
-       }
-    }
+                logger.LogError(ex, "Teacher {TeacherId} failed to update class {ClassId}", request.TeacherId, dto.Id);
 
+                return ResponseDto<bool>.Error(ErrorCode.DatabaseError, "Failed to update Class");
+            }
+        }
+    }
+}

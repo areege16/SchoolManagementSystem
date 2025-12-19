@@ -1,14 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Domain.Enums;
 using SchoolManagementSystem.Domain.Models;
 using SchoolManagementSystem.Domain.RepositoryContract;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace SchoolManagementSystem.Application.Teachers.Classes.Commands.CreateClass
 {
@@ -16,27 +13,37 @@ namespace SchoolManagementSystem.Application.Teachers.Classes.Commands.CreateCla
     {
         private readonly IGenericRepository<Class> repository;
         private readonly IMapper mapper;
+        private readonly ILogger<CreateClassHandler> logger;
 
-        public CreateClassHandler(IGenericRepository<Class> repository ,IMapper mapper)
+        public CreateClassHandler(IGenericRepository<Class> repository,
+                                  IMapper mapper,
+                                  ILogger<CreateClassHandler> logger)
         {
             this.repository = repository;
             this.mapper = mapper;
+            this.logger = logger;
         }
         public async Task<ResponseDto<bool>> Handle(CreateClassCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                var newClass = mapper.Map<Class>(request.classDto);
+                logger.LogInformation("Teacher {TeacherId} attempting to create class with name: {ClassName}", request.TeacherId, request.ClassDto.Name);
+
+                var newClass = mapper.Map<Class>(request.ClassDto);
+                newClass.TeacherId = request.TeacherId;
                 repository.Add(newClass);
-                await repository.SaveChangesAsync();
+                await repository.SaveChangesAsync(cancellationToken);
 
-                return ResponseDto<bool>.Success(true, "Class Created successfully");
+                logger.LogInformation("Teacher {TeacherId} successfully created class with Id {ClassId} with name: {ClassName}", request.TeacherId, newClass.Id, newClass.Name);
+
+                return ResponseDto<bool>.Success(true, "Class created successfully");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return ResponseDto<bool>.Error(ErrorCode.DatabaseError, $"Failed to create class {ex.Message}");
-            }
+                logger.LogError(ex, "Teacher {TeacherId} failed to create class. Class name: {ClassName}", request.TeacherId, request.ClassDto.Name);
 
+                return ResponseDto<bool>.Error(ErrorCode.DatabaseError, "Failed to create class ");
+            }
         }
     }
 }

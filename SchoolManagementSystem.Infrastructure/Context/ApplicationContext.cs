@@ -1,12 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Infrastructure.Context
 {
@@ -35,7 +29,7 @@ namespace SchoolManagementSystem.Infrastructure.Context
               .Property(c => c.IsActive)
               .HasDefaultValue(true);
 
-            modelBuilder.Entity<Class>().HasQueryFilter(i => i.IsActive);
+            modelBuilder.Entity<Class>().HasQueryFilter(i => i.IsActive);//TODO: Revisit 
 
             modelBuilder.Entity<RefreshToken>()
               .HasOne(rt => rt.ApplicationUser)

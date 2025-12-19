@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.Application.DTOs.Class;
 using SchoolManagementSystem.Application.Teachers.Classes.Commands.AssignStudentToClass;
@@ -8,13 +7,13 @@ using SchoolManagementSystem.Application.Teachers.Classes.Commands.CreateClass;
 using SchoolManagementSystem.Application.Teachers.Classes.Commands.DeleteClass;
 using SchoolManagementSystem.Application.Teachers.Classes.Commands.UpdateClass;
 using SchoolManagementSystem.Application.Teachers.Classes.Queries.GetAllClasses;
-using System.Threading.Tasks;
+using SchoolManagementSystem.Web.Extensions;
 
 namespace SchoolManagementSystem.Web.Controllers.Teacher
 {
-    [Route("api/[controller]")]
+    [Route("api/teacher/[controller]")]
     [ApiController]
-    [Authorize(Roles ="Teacher")]
+    [Authorize(Roles = "Teacher")]
     public class ClassesController : ControllerBase
     {
         private readonly IMediator mediator;
@@ -27,31 +26,41 @@ namespace SchoolManagementSystem.Web.Controllers.Teacher
         [HttpPost]
         public async Task<IActionResult> CreateClass(CreateClassDto classDto)
         {
+            var teacherId = User.GetUserId();
             var result = await mediator.Send(new CreateClassCommand
             {
-                classDto = classDto
+                ClassDto = classDto,
+                TeacherId = teacherId,
             });
             return Ok(result);
         }
         #endregion
 
         #region GetAllClasses
-        [HttpGet("GetAllClasses")]
+        [HttpGet]
         public async Task<IActionResult> GetAllClasses()
         {
-            var result = await mediator.Send(new GetAllClassesCommand());
+            var teacherId = User.GetUserId();
+
+            var result = await mediator.Send(new GetAllClassesCommand
+            {
+                TeacherId = teacherId
+            });
             return Ok(result);
         }
         #endregion
 
         #region UpdateClass
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateClass(int id , UpdateClassDto classDto)
+        public async Task<IActionResult> UpdateClass(int id, UpdateClassDto classDto)
         {
             classDto.Id = id;
+            var teacherId = User.GetUserId();
+
             var result = await mediator.Send(new UpdateClassCommand
             {
-                ClassDto=classDto
+                ClassDto = classDto,
+                TeacherId = teacherId,
             });
             return Ok(result);
         }
@@ -63,7 +72,7 @@ namespace SchoolManagementSystem.Web.Controllers.Teacher
         {
             var result = await mediator.Send(new DeleteClassCommand
             {
-                Id =id
+                Id = id
             });
             return Ok(result);
         }
@@ -73,14 +82,14 @@ namespace SchoolManagementSystem.Web.Controllers.Teacher
         [HttpPost("AssignStudentToClass")]
         public async Task<IActionResult> AssignStudentToClass(AssignStudentToClassDto assignStudentToClassDto)
         {
+            var teacherId = User.GetUserId();
             var result = await mediator.Send(new AssignStudentToClassCommand
             {
-                AssignStudentToClassDto = assignStudentToClassDto
+                AssignStudentToClassDto = assignStudentToClassDto,
+                TeacherId = teacherId
             });
             return Ok(result);
         }
         #endregion
-
-
     }
 }

@@ -2,11 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Domain.Models;
 using SchoolManagementSystem.Domain.RepositoryContract;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Teachers.Classes.Commands.CreateClass
 {
@@ -18,27 +13,27 @@ namespace SchoolManagementSystem.Application.Teachers.Classes.Commands.CreateCla
         {
             this.repository = repository;
 
-            RuleFor(x => x.classDto.Name)
+            RuleFor(x => x.ClassDto.Name)
             .NotEmpty().WithMessage("Class name is required.")
             .MaximumLength(100).WithMessage("Class name must not exceed 100 characters.")
             .MustAsync(async(dto, name, cancellation) =>{
                 var exists =await repository
-                    .GetFiltered(c => c.Name == name && c.CourseId == dto.classDto.CourseId, tracked: true)
+                    .GetFiltered(c => c.Name == name && c.CourseId == dto.ClassDto.CourseId, asTracking: true)
                     .AnyAsync(cancellation);
                 return !exists; 
             }).WithMessage("Class name already exists for this course.");
 
-            RuleFor(x => x.classDto.StartDate)
+            RuleFor(x => x.ClassDto.StartDate)
              .GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.Today)).WithMessage("Start date cannot be in the past.")    
-             .LessThan(x => x.classDto.EndDate).WithMessage("Start date must be before end date.");
+             .LessThan(x => x.ClassDto.EndDate).WithMessage("Start date must be before end date.");
 
-            RuleFor(x => x.classDto.EndDate)
+            RuleFor(x => x.ClassDto.EndDate)
             .GreaterThan(DateOnly.FromDateTime(DateTime.Today)).WithMessage("End date must be today or in the future.");
 
-            RuleFor(x => x.classDto.CourseId)
+            RuleFor(x => x.ClassDto.CourseId)
              .GreaterThan(0).WithMessage("Course must be selected.");
 
-            RuleFor(x => x.classDto.Semester)
+            RuleFor(x => x.ClassDto.Semester)
              .IsInEnum().WithMessage("Semester must be a valid value.");
         }
     }

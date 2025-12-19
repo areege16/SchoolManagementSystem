@@ -1,42 +1,54 @@
 ﻿using MediatR;
 using SchoolManagementSystem.Application.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SchoolManagementSystem.Domain.RepositoryContract;
 using SchoolManagementSystem.Domain.Models;
 using AutoMapper.QueryableExtensions;
 using AutoMapper;
-using SchoolManagementSystem.Application.DTOs.Department;
 using SchoolManagementSystem.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Application.DTOs.Assignment.Teacher;
+using Microsoft.Extensions.Logging;
 
 namespace SchoolManagementSystem.Application.Teachers.Assignments.Queries.GetAssignmentById
 {
-    class GetAssignmentByIdHandler : IRequestHandler<GetAssignmentByIdQuery, ResponseDto<AssignmentDto>>
+    public class GetAssignmentByIdHandler : IRequestHandler<GetAssignmentByIdQuery, ResponseDto<AssignmentDto>>
     {
         private readonly IGenericRepository<Assignment> repository;
         private readonly IMapper mapper;
+        private readonly ILogger<GetAssignmentByIdHandler> logger;
 
-        public GetAssignmentByIdHandler(IGenericRepository<Assignment> repository, IMapper mapper)
+        public GetAssignmentByIdHandler(IGenericRepository<Assignment> repository,
+                                        IMapper mapper,
+                                        ILogger<GetAssignmentByIdHandler> logger)
         {
             this.repository = repository;
             this.mapper = mapper;
+            this.logger = logger;
         }
         public async Task<ResponseDto<AssignmentDto>> Handle(GetAssignmentByIdQuery request, CancellationToken cancellationToken)
         {
-            var assignment = await repository.GetAll()
-                           .Where(d => d.Id == request.Id)
-                           .ProjectTo<AssignmentDto>(mapper.ConfigurationProvider)
-                           .FirstOrDefaultAsync(cancellationToken);
+            try
+            {
+                var assignment = await repository
+                         .GetAllAsNoTracking()
+                         .Where(d => d.Id == request.AssignmentId && d.CreatedByTeacherId == request.TeacherId)
+                         .ProjectTo<AssignmentDto>(mapper.ConfigurationProvider)
+                         .FirstOrDefaultAsync(cancellationToken);
 
-            if (assignment == null)
-                return ResponseDto<AssignmentDto>.Error(ErrorCode.NotFound, $"No Assignment with id {request.Id} found");
+                if (assignment == null) //TODO: review assignment message (if teacher not autherize)
+                {
+                    logger.LogWarning("Assignment with ID {AssignmentId} not found", request.AssignmentId);
+                    return ResponseDto<AssignmentDto>.Error(ErrorCode.NotFound, $"Assignment with id {request.AssignmentId} not found ");
+                }
 
-            return ResponseDto<AssignmentDto>.Success(assignment, $"Assignment with id {request.Id} retrieved successfully");
+                logger.LogInformation("Assignment with ID {AssignmentId} retrieved successfully", request.AssignmentId);
+                return ResponseDto<AssignmentDto>.Success(assignment, $"Assignment with id {request.AssignmentId} retrieved successfully");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to retrieve assignment with ID {AssignmentId}", request.AssignmentId);
+                return ResponseDto<AssignmentDto>.Error(ErrorCode.DatabaseError, "Failed to retrieve assignment.");
+            }
         }
     }
 }

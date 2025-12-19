@@ -1,13 +1,8 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Teachers.Assignments.Commands.CreateAssignment
 {
-    public class CreateAssignmentValidator:AbstractValidator<CreateAssignmentCommand>
+    public class CreateAssignmentValidator : AbstractValidator<CreateAssignmentCommand>
     {
         public CreateAssignmentValidator()
         {
@@ -24,9 +19,6 @@ namespace SchoolManagementSystem.Application.Teachers.Assignments.Commands.Creat
 
             RuleFor(x => x.CreateAssignmentDto.ClassId)
                 .GreaterThan(0).WithMessage("ClassId must be greater than 0.");
-
-            RuleFor(x => x.CreateAssignmentDto.CreatedByTeacherId)
-                .NotEmpty().WithMessage("Teacher Id is required.");
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SchoolManagementSystem.Domain.Models.Base;
 using SchoolManagementSystem.Domain.RepositoryContract;
 using SchoolManagementSystem.Infrastructure.Context;
 using System.Linq.Expressions;
@@ -7,8 +6,8 @@ using System.Linq.Expressions;
 namespace SchoolManagementSystem.Web.RepositoryImplementation
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
-    
-    { 
+
+    {
         private readonly ApplicationContext context;
         private readonly DbSet<T> dbSet;
 
@@ -19,25 +18,24 @@ namespace SchoolManagementSystem.Web.RepositoryImplementation
         }
         public void Add(T item)
         {
-            context.Add(item);
+            dbSet.Add(item);
         }
         public void AddRange(IEnumerable<T> items)
         {
-            context.AddRange(items);
+            dbSet.AddRange(items);
         }
-        public IQueryable<T> GetAll()
+        public IQueryable<T> GetAllAsNoTracking()
         {
-            return context.Set<T>().AsNoTracking();
+            return dbSet.AsNoTracking();
         }
-
-        public T GetByID(int id)
+        public async Task<T?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            return dbSet.Find(id);
+            return await dbSet.FindAsync(id, cancellationToken);
         }
-        public IQueryable<T> GetFiltered(Expression<Func<T, bool>> expression, bool tracked = false)
+        public IQueryable<T> GetFiltered(Expression<Func<T, bool>> expression, bool asTracking = false)
         {
             var query = dbSet.Where(expression);
-            return tracked ? query : query.AsNoTracking();
+            return asTracking ? query : query.AsNoTracking();
         }
         public void Update(T item)
         {
@@ -46,24 +44,23 @@ namespace SchoolManagementSystem.Web.RepositoryImplementation
         }
         public void UpdateRange(IEnumerable<T> items)
         {
-            context.UpdateRange(items);
+            dbSet.UpdateRange(items);
         }
         public void Remove(int id)
         {
-            T entity = GetByID(id);
+            var entity = dbSet.Find(id); // TODO: Revisit 
             if (entity != null)
             {
-                context.Remove(entity);
+                dbSet.Remove(entity);
             }
         }
         public void RemoveRange(IEnumerable<T> items)
         {
-            context.RemoveRange(items);
-        }   
-        public async Task SaveChangesAsync()
-        {
-            await context.SaveChangesAsync();
+            dbSet.RemoveRange(items);
         }
-   
+        public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
     }
 }

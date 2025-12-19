@@ -1,17 +1,16 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.Application.DTOs.Attendance.Teacher;
 using SchoolManagementSystem.Application.Teachers.Attendances.Commands.MarkAttendance;
 using SchoolManagementSystem.Application.Teachers.Attendances.Queries.GetAttendanceHistory;
-using System.Threading.Tasks;
+using SchoolManagementSystem.Web.Extensions;
 
 namespace SchoolManagementSystem.Web.Controllers.TeacherControllers
 {
-    [Route("api/[controller]")]
+    [Route("api/teacher/[controller]")]
     [ApiController]
-    [Authorize(Roles= "Teacher")]
+    [Authorize(Roles = "Teacher")]
     public class AttendanceController : ControllerBase
     {
         private readonly IMediator mediator;
@@ -25,9 +24,11 @@ namespace SchoolManagementSystem.Web.Controllers.TeacherControllers
         [HttpPost]
         public async Task<IActionResult> MarkAttendance(MarkAttendanceDto attendanceDto)
         {
+            var teacherId = User.GetUserId();
             var result = await mediator.Send(new MarkAttendanceCommand
             {
-                AttendanceDto = attendanceDto
+                AttendanceDto = attendanceDto,
+                TeacherId = teacherId,
             });
             return Ok(result);
         }
@@ -37,9 +38,11 @@ namespace SchoolManagementSystem.Web.Controllers.TeacherControllers
         [HttpGet("{classId}")]
         public async Task<IActionResult> GetAttendanceHistory(int classId)
         {
+            var teacherId = User.GetUserId();
             var result = await mediator.Send(new GetAttendanceHistoryCommand
             {
-               ClassId= classId
+                ClassId = classId,
+                TeacherId = teacherId,
             });
             return Ok(result);
         }

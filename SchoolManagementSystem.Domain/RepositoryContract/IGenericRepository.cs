@@ -1,10 +1,5 @@
-﻿using SchoolManagementSystem.Domain.Models.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
+
 
 namespace SchoolManagementSystem.Domain.RepositoryContract
 {
@@ -12,13 +7,13 @@ namespace SchoolManagementSystem.Domain.RepositoryContract
     {
         void Add(T item);
         void AddRange(IEnumerable<T> items);
-        T GetByID(int id);
-        IQueryable<T> GetAll();
-        IQueryable<T> GetFiltered(Expression<Func<T, bool>> expression, bool tracked);
+        Task<T>? FindByIdAsync(int id, CancellationToken cancellationToken = default);
+        IQueryable<T> GetAllAsNoTracking();
+        IQueryable<T> GetFiltered(Expression<Func<T, bool>> expression, bool asTracking);
         void Update(T item);
         void UpdateRange(IEnumerable<T> items);
         void Remove(int id);
-        void RemoveRange(IEnumerable<T> items);    
-        Task SaveChangesAsync();
+        void RemoveRange(IEnumerable<T> items);
+        Task SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

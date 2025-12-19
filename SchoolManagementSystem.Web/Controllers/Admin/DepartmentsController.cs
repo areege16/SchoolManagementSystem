@@ -1,19 +1,17 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.Application.Admin.Departments.Commands.CreateDepartment;
 using SchoolManagementSystem.Application.Admin.Departments.Commands.DeleteDepartment;
 using SchoolManagementSystem.Application.Admin.Departments.Commands.UpdateDepartment;
-using SchoolManagementSystem.Application.Admin.Departments.Queries;
 using SchoolManagementSystem.Application.Admin.Departments.Queries.GetAllDepartments;
 using SchoolManagementSystem.Application.Admin.Departments.Queries.GetDepartmentById;
 using SchoolManagementSystem.Application.DTOs.Department;
-using System.Threading.Tasks;
+using SchoolManagementSystem.Web.Extensions;
 
 namespace SchoolManagementSystem.Web.Controllers.Admin
 {
-    [Route("api/[controller]")]
+    [Route("api/admin/[controller]")]
     [ApiController]
     [Authorize(Roles = "Admin")]
     public class DepartmentsController : ControllerBase
@@ -29,9 +27,12 @@ namespace SchoolManagementSystem.Web.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> CreateDepartment(CreateDepartmentDto departmentDto)
         {
+            var adminId = User.GetUserId();
+
             var result = await mediator.Send(new CreateDepartmentCommand
             {
-                DepartmentDto = departmentDto
+                DepartmentDto = departmentDto,
+                AdminId = adminId
             });
             return Ok(result);
         }
@@ -51,9 +52,12 @@ namespace SchoolManagementSystem.Web.Controllers.Admin
         public async Task<IActionResult> UpdateDepartment(int id, UpdateDepartmentDto departmentDto)
         {
             departmentDto.Id = id;
+            var adminId = User.GetUserId();
+
             var result = await mediator.Send(new UpdateDepartmentCommand
             {
-                DepartmentDto = departmentDto
+                DepartmentDto = departmentDto,
+                AdminId = adminId,
             });
             return Ok(result);
         }
@@ -72,11 +76,12 @@ namespace SchoolManagementSystem.Web.Controllers.Admin
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDepartmentById(int id)
         {
-            var result = await mediator.Send(new GetDepartmentByIdQuery { 
-                Id = id 
+            var result = await mediator.Send(new GetDepartmentByIdQuery
+            {
+                Id = id
             });
             return Ok(result);
-        } 
+        }
         #endregion
     }
 }

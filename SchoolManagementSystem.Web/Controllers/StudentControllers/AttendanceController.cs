@@ -1,9 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.Application.Students.Attendances.Queries.GetAttendance;
-using SchoolManagementSystem.Application.Students.Classes.Queries.GetEnrolledClasses;
+using SchoolManagementSystem.Web.Extensions;
 
 namespace SchoolManagementSystem.Web.Controllers.StudentControllers
 {
@@ -19,11 +18,12 @@ namespace SchoolManagementSystem.Web.Controllers.StudentControllers
             this.mediator = mediator;
         }
         [HttpGet]
-        public async Task<IActionResult> GetAttendance()
+        public async Task<IActionResult> GetStudentAttendance()
         {
+            var studentId = User.GetUserId();
             var result = await mediator.Send(new GetAttendanceQuery
             {
-                User = User
+                StudentId = studentId
             });
             return Ok(result);
         }

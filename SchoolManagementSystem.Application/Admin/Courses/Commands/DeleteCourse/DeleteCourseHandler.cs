@@ -1,5 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using SchoolManagementSystem.Application.Common;
 using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Domain.Enums;
 using SchoolManagementSystem.Domain.Models;
@@ -12,20 +14,24 @@ namespace SchoolManagementSystem.Application.Admin.Courses.Commands.DeleteCourse
     {
         private readonly IGenericRepository<Course> courseRepository;
         private readonly IGenericRepository<Class> classRepository;
+        private readonly IMemoryCache memoryCache;
 
-        public DeleteCourseHandler(IGenericRepository<Course> courseRepository,IGenericRepository<Class> classRepository)
+        public DeleteCourseHandler(IGenericRepository<Course> courseRepository,
+                                   IGenericRepository<Class> classRepository,
+                                   IMemoryCache memoryCache)
         {
             this.courseRepository = courseRepository;
             this.classRepository = classRepository;
+            this.memoryCache = memoryCache;
         }
         public async Task<ResponseDto<bool>> Handle(DeleteCourseCommand request, CancellationToken cancellationToken)
         { 
             try
             {        
-                var course = courseRepository
-                  .GetFiltered(d => d.Id == request.Id,tracked:true)
+                var course =await courseRepository
+                  .GetFiltered(d => d.Id == request.Id,asTracking:true)
                   .Include(d => d.Classes)
-                  .FirstOrDefault();
+                  .FirstOrDefaultAsync(cancellationToken);
 
                 if (course == null)
                     return ResponseDto<bool>.Error(ErrorCode.NotFound, $"Course with id {request.Id} not found");
@@ -33,11 +39,13 @@ namespace SchoolManagementSystem.Application.Admin.Courses.Commands.DeleteCourse
                 if (course.Classes != null && course.Classes.Count > 0)
                 {
                     classRepository.RemoveRange(course.Classes);
-                    await classRepository.SaveChangesAsync();
+                    await classRepository.SaveChangesAsync(cancellationToken);
                 }
 
                 courseRepository.Remove(request.Id);
-                await courseRepository.SaveChangesAsync();
+                await courseRepository.SaveChangesAsync(cancellationToken);
+
+                memoryCache.Remove(CacheKeys.CoursesList);
 
                 return ResponseDto<bool>.Success(true, $"Course with id {request.Id} deleted successfully");
             }

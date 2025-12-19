@@ -21,6 +21,9 @@ using MediatR;
 using SchoolManagementSystem.Application.Account.Commands.Register;
 using SchoolManagementSystem.Application.Services.TokenService;
 using SchoolManagementSystem.Application.Settings;
+using Serilog;
+using Microsoft.Extensions.Options;
+using System.Diagnostics;
 
 
 namespace SchoolManagementSystem.Web
@@ -40,6 +43,15 @@ namespace SchoolManagementSystem.Web
             builder.Services.AddDbContext<ApplicationContext>(option =>
             {
                 option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                //option.LogTo(Console.WriteLine);
+                //option.EnableSensitiveDataLogging();
+                if (builder.Environment.IsDevelopment())
+                {
+                    option.LogTo(
+                        message => Console.WriteLine($"\n[EF] {message}\n"),
+                        new[] { DbLoggerCategory.Database.Command.Name },
+                        LogLevel.Information);
+                }
             });
 
             builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
@@ -90,6 +102,11 @@ namespace SchoolManagementSystem.Web
             builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+            builder.Host.UseSerilog((context, services, configuration) =>
+            {
+                configuration.ReadFrom.Configuration(context.Configuration);
+            });
 
             var app = builder.Build();
 

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SchoolManagementSystem.Domain.Models
 {
-    public class StudentClass 
+    public class StudentClass //TODO: Refactor to composite primary key(StudentId, ClassId)
     {
         public int Id { set; get; }
         public DateTime EnrollmentDate { set; get; }
@@ -19,7 +14,5 @@ namespace SchoolManagementSystem.Domain.Models
         [ForeignKey("Class")]
         public int ClassId { set; get; }
         public Class Class { set; get; }
-
-
     }
 }

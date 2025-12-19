@@ -1,14 +1,8 @@
 ﻿using FluentValidation;
-using SchoolManagementSystem.Application.Teachers.Classes.Commands.AssignStudentToClass;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Teachers.Attendances.Commands.MarkAttendance
 {
-    class MarkAttendanceValidator:AbstractValidator<MarkAttendanceCommand>
+    class MarkAttendanceValidator : AbstractValidator<MarkAttendanceCommand>
     {
         public MarkAttendanceValidator()
         {
@@ -25,14 +19,6 @@ namespace SchoolManagementSystem.Application.Teachers.Attendances.Commands.MarkA
             RuleFor(x => x.AttendanceDto.StudentId)
                 .NotEmpty()
                 .WithMessage("StudentId is required.");
-
-            RuleFor(x => x.AttendanceDto.MarkedByTeacherId)
-                .NotEmpty()
-                .WithMessage("MarkedByTeacherId is required.");
-
-            RuleFor(x => x.AttendanceDto.Date)
-                .LessThanOrEqualTo(DateTime.UtcNow)
-                .WithMessage("Attendance date cannot be in the future.");
         }
     }
 }

@@ -1,22 +1,19 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.Application.Admin.Courses.Commands.CreateCourses;
 using SchoolManagementSystem.Application.Admin.Courses.Commands.UpdateCourse;
 using SchoolManagementSystem.Application.Admin.Courses.Queries.GetACourseById;
 using SchoolManagementSystem.Application.Admin.Courses.Queries.GetAllCourses;
 using SchoolManagementSystem.Application.Admin.Courses.Commands.DeleteCourse;
-
-using SchoolManagementSystem.Application.Admin.Departments.Commands.DeleteDepartment;
 using SchoolManagementSystem.Application.DTOs.Course;
-using System.Threading.Tasks;
+using SchoolManagementSystem.Web.Extensions;
 
 namespace SchoolManagementSystem.Web.Controllers.Admin
 {
-    [Route("api/[controller]")]
+    [Route("api/admin/[controller]")]
     [ApiController]
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles = "Admin")]
     public class CoursesController : ControllerBase
     {
         private readonly IMediator mediator;
@@ -24,13 +21,15 @@ namespace SchoolManagementSystem.Web.Controllers.Admin
         {
             this.mediator = mediator;
         }
-        #region CreateCourse
+        #region CreateNewCourse
         [HttpPost]
         public async Task<IActionResult> CreateCourse(CreateCourseDto courseDto)
         {
+            var adminId = User.GetUserId();
             var result = await mediator.Send(new CreateCourseCommand
             {
-                CourseDto = courseDto
+                CourseDto = courseDto,
+                AdminId = adminId,
             });
             return Ok(result);
         }
@@ -42,7 +41,7 @@ namespace SchoolManagementSystem.Web.Controllers.Admin
         {
             var result = await mediator.Send(new DeleteCourseCommand
             {
-                Id= id
+                Id = id
             });
             return Ok(result);
         }
@@ -61,7 +60,8 @@ namespace SchoolManagementSystem.Web.Controllers.Admin
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCourseById(int id)
         {
-            var result = await mediator.Send(new GetACourseByIdQuery{
+            var result = await mediator.Send(new GetCourseByIdQuery
+            {
                 Id = id
             });
             return Ok(result);
@@ -70,12 +70,15 @@ namespace SchoolManagementSystem.Web.Controllers.Admin
 
         #region UpdateCourse
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCourse(int id , UpdateCourseDto courseDto)
+        public async Task<IActionResult> UpdateCourse(int id, UpdateCourseDto courseDto)
         {
             courseDto.Id = id;
+            var adminId = User.GetUserId();
+
             var result = await mediator.Send(new UpdateCourseCommand
             {
-                CourseDto=courseDto
+                CourseDto = courseDto,
+                AdminId = adminId
             });
             return Ok(result);
         }

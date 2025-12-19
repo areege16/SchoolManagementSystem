@@ -1,18 +1,13 @@
 ﻿using MediatR;
 using SchoolManagementSystem.Application.DTOs.Class;
 using SchoolManagementSystem.Application.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SchoolManagementSystem.Domain.RepositoryContract;
 using SchoolManagementSystem.Domain.Models;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using SchoolManagementSystem.Application.DTOs.Department;
 using SchoolManagementSystem.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using AutoMapper.QueryableExtensions;
 
 namespace SchoolManagementSystem.Application.Teachers.Classes.Queries.GetAllClasses
 {
@@ -20,23 +15,43 @@ namespace SchoolManagementSystem.Application.Teachers.Classes.Queries.GetAllClas
     {
         private readonly IGenericRepository<Class> repository;
         private readonly IMapper mapper;
+        private readonly ILogger<GetAllClassesHandler> logger;
 
-        public GetAllClassesHandler(IGenericRepository<Class> repository , IMapper mapper)
+        public GetAllClassesHandler(IGenericRepository<Class> repository,
+                                    IMapper mapper,
+                                    ILogger<GetAllClassesHandler> logger)
         {
             this.repository = repository;
             this.mapper = mapper;
+            this.logger = logger;
         }
         public async Task<ResponseDto<List<ClassDto>>> Handle(GetAllClassesCommand request, CancellationToken cancellationToken)
         {
-            var classes =await repository
-                .GetAll()
+            try
+            {
+                logger.LogInformation("Retrieving all classes for teacher.");
+
+                var classes = await repository
+                .GetAllAsNoTracking()
+                .Where(c => c.TeacherId == request.TeacherId)
                 .ProjectTo<ClassDto>(mapper.ConfigurationProvider)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
-            if (classes.Count == 0)
-                return ResponseDto<List<ClassDto>>.Error(ErrorCode.NotFound, "No Class found");
+                if (classes.Count == 0)
+                {
+                    logger.LogWarning("No classes found for Teacher {TeacherId}.", request.TeacherId);
+                    return ResponseDto<List<ClassDto>>.Error(ErrorCode.NotFound, "No Class found");
+                }
 
-            return ResponseDto<List<ClassDto>>.Success(classes, "Classes retrieved successfully");
+                logger.LogInformation("Successfully retrieved {ClassCount} classes.", classes.Count);
+
+                return ResponseDto<List<ClassDto>>.Success(classes, "Classes retrieved successfully");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An error occurred while retrieving classes.");
+                return ResponseDto<List<ClassDto>>.Error(ErrorCode.DatabaseError, "Failed to retrieve classes.");
+            }
         }
     }
 }

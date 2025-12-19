@@ -1,17 +1,11 @@
 ﻿using MediatR;
 using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.DTOs.Assignment.Student;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Students.Assignments.Queries.GetStudentAssignments
 {
-    public class GetStudentAssignmentsQuery:IRequest<ResponseDto<List<GetStudentAssignmentDto>>>
+    public class GetStudentAssignmentsQuery : IRequest<ResponseDto<List<GetStudentAssignmentDto>>>
     {
-        public ClaimsPrincipal User { get; set; }
+        public string StudentId { get; set; }
     }
 }

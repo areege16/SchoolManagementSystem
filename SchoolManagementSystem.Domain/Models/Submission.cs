@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SchoolManagementSystem.Domain.Models
 {
-    public class Submission 
+    public class Submission  //TODO: add StoredFileName and OriginalFileName property 
     {
         public int Id { get; set; }
         public DateTime SubmittedDate { get; set; }
@@ -29,6 +24,6 @@ namespace SchoolManagementSystem.Domain.Models
         [ForeignKey("GradedByTeacher")]
         public string? GradedByTeacherId { get; set; }
         public Teacher GradedByTeacher { get; set; }
-     
+
     }
 }

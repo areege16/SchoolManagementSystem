@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SchoolManagementSystem.Application.DTOs.Course
+﻿namespace SchoolManagementSystem.Application.DTOs.Course
 {
    public class UpdateCourseDto 
     {
@@ -14,6 +8,5 @@ namespace SchoolManagementSystem.Application.DTOs.Course
         public string? Description { set; get; }
         public int? Credits { get; set; }
         public int? DepartmentId { get; set; }
-        public DateTime UpdatedDate { get; set; }
     }
 }

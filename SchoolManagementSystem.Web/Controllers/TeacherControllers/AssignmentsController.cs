@@ -1,18 +1,16 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.Application.DTOs.Assignment.Teacher;
 using SchoolManagementSystem.Application.Teachers.Assignments.Commands.CreateAssignment;
 using SchoolManagementSystem.Application.Teachers.Assignments.Commands.GradeStudentSubmission;
 using SchoolManagementSystem.Application.Teachers.Assignments.Queries.GetAssignmentById;
-using System.Threading.Tasks;
-
+using SchoolManagementSystem.Web.Extensions;
 namespace SchoolManagementSystem.Web.Controllers.TeacherControllers
 {
     [Route("api/teacher/[controller]")]
     [ApiController]
-    [Authorize(Roles ="Teacher")]
+    [Authorize(Roles = "Teacher")]
     public class AssignmentsController : ControllerBase
     {
         private readonly IMediator mediator;
@@ -25,9 +23,12 @@ namespace SchoolManagementSystem.Web.Controllers.TeacherControllers
         [HttpPost]
         public async Task<IActionResult> CreateAssignment(CreateAssignmentDto createAssignmentDto)
         {
+            var teacherId = User.GetUserId();
+
             var result = await mediator.Send(new CreateAssignmentCommand
             {
-                CreateAssignmentDto = createAssignmentDto
+                CreateAssignmentDto = createAssignmentDto,
+                TeacherId = teacherId
             });
             return Ok(result);
         }
@@ -37,9 +38,11 @@ namespace SchoolManagementSystem.Web.Controllers.TeacherControllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAssignmentById(int id)
         {
+            var teacherId = User.GetUserId();
             var result = await mediator.Send(new GetAssignmentByIdQuery
             {
-                Id=id
+                AssignmentId = id,
+                TeacherId = teacherId,
             });
             return Ok(result);
         }
@@ -47,13 +50,14 @@ namespace SchoolManagementSystem.Web.Controllers.TeacherControllers
 
         #region GradeStudentSubmission
         [HttpPost("{id}/grade")]
-        public async Task<IActionResult> GradeStudentSubmission(int id,GradeStudentSubmissionDto gradeStudentSubmissionDto )
+        public async Task<IActionResult> GradeStudentSubmission(int id, GradeStudentSubmissionDto gradeStudentSubmissionDto)
         {
             gradeStudentSubmissionDto.AssignmentId = id;
+            var teacherId = User.GetUserId();
             var result = await mediator.Send(new GradeStudentSubmissionCommand
             {
-                User = User,
-                GradeStudentSubmissionDto = gradeStudentSubmissionDto
+                GradeStudentSubmissionDto = gradeStudentSubmissionDto,
+                TeacherId = teacherId,
             });
             return Ok(result);
         }

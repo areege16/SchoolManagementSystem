@@ -1,15 +1,10 @@
 ﻿using SchoolManagementSystem.Domain.Enums;
 using SchoolManagementSystem.Domain.Models.Base;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Domain.Models
 {
-    public class Attendance: BaseEntity
+    public class Attendance : BaseEntity // TODO: Change Date from DateTime to DateOnly
     {
         public DateTime Date { set; get; }
         public AttendanceStatus Status { set; get; }
@@ -27,6 +22,5 @@ namespace SchoolManagementSystem.Domain.Models
         [ForeignKey("MarkedByTeacher")]
         public string MarkedByTeacherId { get; set; }
         public Teacher MarkedByTeacher { get; set; }
-
     }
 }

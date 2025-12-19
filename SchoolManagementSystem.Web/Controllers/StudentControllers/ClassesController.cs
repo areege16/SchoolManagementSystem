@@ -1,17 +1,14 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SchoolManagementSystem.Application.Admin.Departments.Queries.GetDepartmentById;
 using SchoolManagementSystem.Application.Students.Classes.Queries.GetEnrolledClasses;
-using System.Security.Claims;
-using System.Threading.Tasks;
+using SchoolManagementSystem.Web.Extensions;
 
 namespace SchoolManagementSystem.Web.Controllers.StudentControllers
 {
     [Route("api/student/[controller]")]
     [ApiController]
-    [Authorize(Roles ="Student")]
+    [Authorize(Roles = "Student")]
     public class ClassesController : ControllerBase
     {
         private readonly IMediator mediator;
@@ -20,13 +17,15 @@ namespace SchoolManagementSystem.Web.Controllers.StudentControllers
             this.mediator = mediator;
         }
         [HttpGet]
-        public async Task<IActionResult> GetEnrolledClasses()
+        public async Task<IActionResult> GetStudentEnrolledClasses()
         {
+            var studentId = User.GetUserId();
+
             var result = await mediator.Send(new GetEnrolledClassesCommand
             {
-                User = User
+                StudentId = studentId,
             });
             return Ok(result);
         }
-    }   
+    }
 }

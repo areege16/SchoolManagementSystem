@@ -2,17 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Domain.Models;
 using SchoolManagementSystem.Domain.RepositoryContract;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Admin.Departments.Commands.CreateDepartment
 {
-    public class CreateDepartmentValidator:AbstractValidator<CreateDepartmentCommand>
+    public class CreateDepartmentValidator : AbstractValidator<CreateDepartmentCommand>
     {
-
         public CreateDepartmentValidator(IGenericRepository<Department> departmentRepository, IGenericRepository<Teacher> teacherRepository)
         {
             RuleFor(x => x.DepartmentDto.Name)
@@ -20,22 +14,22 @@ namespace SchoolManagementSystem.Application.Admin.Departments.Commands.CreateDe
                 .MustAsync(async (name, cancellation) =>
                 {
                     var exists = await departmentRepository
-                    .GetFiltered(deptName => deptName.Name == name, tracked: false)
+                    .GetFiltered(deptName => deptName.Name == name, asTracking: false)
                     .AnyAsync(cancellation);
-                    return !exists ;
+                    return !exists;
 
                 }).WithMessage("Department name must be unique.");
 
 
             RuleFor(x => x.DepartmentDto.HeadOfDepartmentId)
-                .MustAsync(async (id , Cancellation) =>
+                .MustAsync(async (id, Cancellation) =>
                 {
                     if (string.IsNullOrEmpty(id))
                         return true;
 
-                    return await teacherRepository.GetAll()
+                    return await teacherRepository.GetAllAsNoTracking()
                     .AnyAsync(t => t.Id == id);
-                   
+
                 }).WithMessage("Head of Department must be a valid teacher");
 
         }

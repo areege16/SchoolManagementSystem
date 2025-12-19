@@ -1,14 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
+using SchoolManagementSystem.Application.Common;
 using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Domain.Enums;
 using SchoolManagementSystem.Domain.Models;
 using SchoolManagementSystem.Domain.RepositoryContract;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Admin.Courses.Commands.UpdateCourse
 {
@@ -16,32 +14,51 @@ namespace SchoolManagementSystem.Application.Admin.Courses.Commands.UpdateCourse
     {
         private readonly IGenericRepository<Course> repository;
         private readonly IMapper mapper;
+        private readonly ILogger<UpdateCourseHandler> logger;
+        private readonly IMemoryCache memoryCache;
 
-        public UpdateCourseHandler(IGenericRepository<Course> repository , IMapper mapper)
+        public UpdateCourseHandler(IGenericRepository<Course> repository,
+                                   IMapper mapper,
+                                   ILogger<UpdateCourseHandler> logger,
+                                   IMemoryCache memoryCache)
         {
             this.repository = repository;
             this.mapper = mapper;
+            this.logger = logger;
+            this.memoryCache = memoryCache;
         }
         public async Task<ResponseDto<bool>> Handle(UpdateCourseCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                var course = repository.GetByID(request.CourseDto.Id);
+                logger.LogInformation("Admin {AdminId} attempting to update course with id: {CourseId}", request.AdminId, request.CourseDto.Id);
+
+                var course = await repository.FindByIdAsync(request.CourseDto.Id, cancellationToken);
 
                 if (course == null)
+                {
+                    logger.LogWarning("Admin {AdminId} tried to update non-existent course {CourseId}", request.AdminId, request.CourseDto.Id);
+
                     return ResponseDto<bool>.Error(ErrorCode.NotFound, $"Course with id {request.CourseDto.Id} not found.");
+                }
 
                 mapper.Map(request.CourseDto, course);
-                repository.Update(course);
-                await repository.SaveChangesAsync();
+                course.UpdatedDate = DateTime.UtcNow;
 
-                return ResponseDto<bool>.Success(true, "Course information Updated successfully");
+                await repository.SaveChangesAsync(cancellationToken);
+
+                memoryCache.Remove(CacheKeys.CoursesList);
+
+                logger.LogInformation("Admin {AdminId} successfully updated course {CourseId}.", request.AdminId, request.CourseDto.Id);
+
+                return ResponseDto<bool>.Success(true, "Course information updated successfully. ");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return ResponseDto<bool>.Error(ErrorCode.DatabaseError, $"Failed to update course {ex.Message}");
-            }
+                logger.LogError(ex, "Admin {AdminId} failed to update course {CourseId}", request.AdminId, request.CourseDto.Id);
 
+                return ResponseDto<bool>.Error(ErrorCode.DatabaseError, "Failed to update course");
+            }
         }
     }
 }
