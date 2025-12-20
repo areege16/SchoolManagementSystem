@@ -24,6 +24,7 @@ using SchoolManagementSystem.Application.Settings;
 using Serilog;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
+using Microsoft.OpenApi.Models;
 
 
 namespace SchoolManagementSystem.Web
@@ -38,7 +39,42 @@ namespace SchoolManagementSystem.Web
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+
+            // Configure Swagger with JWT Bearer authentication support
+            builder.Services.AddSwaggerGen(swagger =>
+            {
+                swagger.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "School Management System API",
+                    Description = "API for School Management System"
+                });
+
+                swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Enter 'Bearer' [space] and then your token in the text input below\nExample: \"Bearer eyJhbGciOi...\""
+                });
+
+                swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+            });
 
             builder.Services.AddDbContext<ApplicationContext>(option =>
             {
