@@ -67,7 +67,9 @@ namespace SchoolManagementSystem.Application.AutoMapperProfile
 
             #region Assignment
             CreateMap<CreateAssignmentDto, Assignment>();
-            CreateMap<Assignment, AssignmentDto>();
+            CreateMap<Assignment, AssignmentDetailsDto>();
+            CreateMap<Submission, SubmissionDto>()
+                .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src => src.Student.ApplicationUser.Name));
             CreateMap<GradeStudentSubmissionDto, Submission>();
             CreateMap<Assignment, GetStudentAssignmentDto>()
                 .ForMember(dest => dest.AssignmentId, opt => opt.MapFrom(src => src.Id))
@@ -77,6 +79,7 @@ namespace SchoolManagementSystem.Application.AutoMapperProfile
             CreateMap<Submission, GetStudentGradeDto>()
                 .ForMember(dest => dest.AssignmentTitle, opt => opt.MapFrom(src => src.Assignment.Title));
 
+            CreateMap<Assignment, GetTeacherAssignmentDto>();
             #endregion
         }
     }

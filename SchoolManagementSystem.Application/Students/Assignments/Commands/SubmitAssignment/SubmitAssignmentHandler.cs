@@ -83,7 +83,9 @@ namespace SchoolManagementSystem.Application.Students.Assignments.Commands.Submi
                 {
                     AssignmentId = dto.AssignmentId,
                     SubmittedDate = DateTime.UtcNow,
-                    FileUrl = $"/uploads/submissions/{safeFileName}"
+                    StudentId = request.StudentId,
+                    OriginalFileName = Path.GetFileName(dto.File.FileName),
+                    StoredFileName = $"/uploads/submissions/{safeFileName}"
                 };
 
                 submissionRepository.Add(submission);
