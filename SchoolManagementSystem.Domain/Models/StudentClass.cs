@@ -2,10 +2,9 @@
 
 namespace SchoolManagementSystem.Domain.Models
 {
-    public class StudentClass //TODO: Refactor to composite primary key(StudentId, ClassId)
+    public class StudentClass
     {
-        public int Id { set; get; }
-        public DateTime EnrollmentDate { set; get; }
+        public DateOnly EnrollmentDate { set; get; }
 
         [ForeignKey("Student")]
         public string StudentId { set; get; }

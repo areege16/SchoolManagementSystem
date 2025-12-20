@@ -59,21 +59,22 @@ namespace SchoolManagementSystem.Application.Teachers.Attendances.Commands.MarkA
                     return ResponseDto<bool>.Error(ErrorCode.InvalidInput, "Student is not enrolled in this class.");
                 }
 
+                DateOnly Date = DateOnly.FromDateTime(DateTime.UtcNow);
                 var existing = await attendanceRepository
                    .GetFiltered(a => a.ClassId == dto.ClassId
                                      && a.StudentId == dto.StudentId
-                                     && a.Date == DateTime.UtcNow, asTracking: false)
+                                     && a.Date == Date, asTracking: false)
                    .AnyAsync(cancellationToken);
 
                 if (existing)
                 {
-                    logger.LogWarning("Duplicate attendance attempt blocked for Student {StudentId} in Class {ClassId} on {AttendanceDate}. ", dto.StudentId, dto.ClassId, DateTime.UtcNow);
+                    logger.LogWarning("Duplicate attendance attempt blocked for Student {StudentId} in Class {ClassId} on {AttendanceDate}. ", dto.StudentId, dto.ClassId, Date);
                     return ResponseDto<bool>.Error(ErrorCode.Conflict, "Attendance already marked for today.");
                 }
 
                 var attendance = mapper.Map<Attendance>(request.AttendanceDto);
                 attendance.MarkedByTeacherId = teacherId;
-                attendance.Date = DateTime.UtcNow;
+                attendance.Date = Date;
 
                 attendanceRepository.Add(attendance);
                 await attendanceRepository.SaveChangesAsync(cancellationToken);

@@ -15,7 +15,7 @@ namespace SchoolManagementSystem.Application.Teachers.Assignments.Commands.Creat
 
             RuleFor(x => x.CreateAssignmentDto.DueDate)
                 .NotEmpty().WithMessage("Due date is required.")
-                .GreaterThanOrEqualTo(DateTime.UtcNow).WithMessage("Due date must be in the future.");
+                .GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow)).WithMessage("Due date must be in the future.");
 
             RuleFor(x => x.CreateAssignmentDto.ClassId)
                 .GreaterThan(0).WithMessage("ClassId must be greater than 0.");

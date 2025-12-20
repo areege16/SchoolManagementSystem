@@ -9,7 +9,6 @@ namespace SchoolManagementSystem.Infrastructure.Context
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
         }
-
         public DbSet<Assignment> Assignments { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
         public DbSet<Class> Classes { get; set; }
@@ -36,6 +35,9 @@ namespace SchoolManagementSystem.Infrastructure.Context
               .WithMany(u => u.RefreshTokens)
               .HasForeignKey(rt => rt.UserId)
               .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<StudentClass>()
+               .HasKey(sc => new { sc.StudentId, sc.ClassId });
 
             base.OnModelCreating(modelBuilder);
         }

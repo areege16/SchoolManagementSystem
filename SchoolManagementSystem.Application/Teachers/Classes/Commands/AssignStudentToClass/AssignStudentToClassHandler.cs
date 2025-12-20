@@ -61,7 +61,7 @@ namespace SchoolManagementSystem.Application.Teachers.Classes.Commands.AssignStu
                     return ResponseDto<bool>.Error(ErrorCode.ValidationFailed, "Student already assigned to this class");
                 }
                 var studentClass = mapper.Map<StudentClass>(dto);
-                studentClass.EnrollmentDate = DateTime.UtcNow;
+                studentClass.EnrollmentDate = DateOnly.FromDateTime(DateTime.UtcNow);
                 studentClassRepository.Add(studentClass);
 
                 await studentClassRepository.SaveChangesAsync(cancellationToken);

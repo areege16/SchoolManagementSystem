@@ -1,12 +1,4 @@
-﻿using SchoolManagementSystem.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SchoolManagementSystem.Application.DTOs.Class
+﻿namespace SchoolManagementSystem.Application.DTOs.Class
 {
     public class EnrolledClassDto
     {
@@ -17,6 +9,6 @@ namespace SchoolManagementSystem.Application.DTOs.Class
         public string Semester { get; set; }
         public DateOnly StartDate { get; set; }
         public DateOnly EndDate { get; set; }
-        public DateTime EnrollmentDate { set; get; }
+        public DateOnly EnrollmentDate { set; get; }
     }
 }

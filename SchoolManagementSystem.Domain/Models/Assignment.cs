@@ -7,7 +7,7 @@ namespace SchoolManagementSystem.Domain.Models
     {
         public string Title { set; get; }
         public string? Description { get; set; }
-        public DateTime DueDate { set; get; }//TODO: change DateTime to dateonly
+        public DateOnly DueDate { set; get; }
 
         [ForeignKey("Class")]
         public int ClassId { set; get; }

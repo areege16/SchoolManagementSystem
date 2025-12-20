@@ -9,6 +9,6 @@ namespace SchoolManagementSystem.Application.DTOs.Attendance.Teacher
         public string StudentName { set; get; }
         public string MarkedByTeacherId { get; set; }
         public AttendanceStatus Status { set; get; }
-        public DateTime Date { set; get; }
+        public DateOnly Date { set; get; }
     }
 }
