@@ -17,13 +17,15 @@ namespace SchoolManagementSystem.Web.Controllers.StudentControllers
             this.mediator = mediator;
         }
         [HttpGet]
-        public async Task<IActionResult> GetStudentEnrolledClasses()
+        public async Task<IActionResult> GetStudentEnrolledClasses(int pageNumber = 1, int pageSize = 10)
         {
             var studentId = User.GetUserId();
 
-            var result = await mediator.Send(new GetEnrolledClassesCommand
+            var result = await mediator.Send(new GetStudentEnrolledClassesQuery
             {
                 StudentId = studentId,
+                PageNumber = pageNumber,
+                PageSize = pageSize
             });
             return Ok(result);
         }

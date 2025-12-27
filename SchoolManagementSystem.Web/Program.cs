@@ -1,13 +1,9 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using SchoolManagementSystem.Application.Account.Commands;
 using SchoolManagementSystem.Domain.Models;
 using SchoolManagementSystem.Infrastructure.Context;
 using SchoolManagementSystem.Web.Seed;
-using SchoolManagementSystem.Application;
-using System.Reflection;
 using SchoolManagementSystem.Domain.RepositoryContract;
 using SchoolManagementSystem.Web.RepositoryImplementation;
 using SchoolManagementSystem.Application.AutoMapperProfile;
@@ -22,9 +18,8 @@ using SchoolManagementSystem.Application.Account.Commands.Register;
 using SchoolManagementSystem.Application.Services.TokenService;
 using SchoolManagementSystem.Application.Settings;
 using Serilog;
-using Microsoft.Extensions.Options;
-using System.Diagnostics;
 using Microsoft.OpenApi.Models;
+using SchoolManagementSystem.Application.Common.Behaviors;
 
 
 namespace SchoolManagementSystem.Web
@@ -129,13 +124,12 @@ namespace SchoolManagementSystem.Web
             builder.Services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(typeof(RegisterHandler).Assembly);
+                cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
             });
 
-            builder.Services.AddFluentValidationAutoValidation();
             builder.Services.AddFluentValidationClientsideAdapters();
             builder.Services.AddValidatorsFromAssembly(SchoolManagementSystem.Application.AssemblyReference.Assembly,
               includeInternalTypes: true);
-            builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 

@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using SchoolManagementSystem.Application.DTOs;
+using SchoolManagementSystem.Application.Common.Responses;
 using SchoolManagementSystem.Application.DTOs.Account;
 using System;
 using System.Collections.Generic;

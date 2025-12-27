@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using SchoolManagementSystem.Application.DTOs.Department;
-using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Domain.RepositoryContract;
 using SchoolManagementSystem.Domain.Models;
 using AutoMapper;
@@ -12,6 +11,7 @@ using Microsoft.Extensions.Options;
 using SchoolManagementSystem.Application.Settings;
 using SchoolManagementSystem.Application.Common;
 using Microsoft.Extensions.Logging;
+using SchoolManagementSystem.Application.Common.Responses;
 
 namespace SchoolManagementSystem.Application.Admin.Departments.Queries.GetAllDepartments
 {

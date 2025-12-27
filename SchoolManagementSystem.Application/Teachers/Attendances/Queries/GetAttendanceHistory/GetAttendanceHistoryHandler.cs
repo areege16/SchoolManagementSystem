@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Domain.RepositoryContract;
 using SchoolManagementSystem.Domain.Models;
 using AutoMapper.QueryableExtensions;
@@ -8,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Domain.Enums;
 using SchoolManagementSystem.Application.DTOs.Attendance.Teacher;
 using Microsoft.Extensions.Logging;
+using SchoolManagementSystem.Application.Common.Responses;
 
 namespace SchoolManagementSystem.Application.Teachers.Attendances.Queries.GetAttendanceHistory
 {

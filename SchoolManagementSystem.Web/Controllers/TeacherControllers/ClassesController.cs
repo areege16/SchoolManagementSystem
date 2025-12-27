@@ -38,13 +38,15 @@ namespace SchoolManagementSystem.Web.Controllers.Teacher
 
         #region GetAllClasses
         [HttpGet]
-        public async Task<IActionResult> GetAllClasses()
+        public async Task<IActionResult> GetAllClasses(int pageNumber = 1, int pageSize = 10)
         {
             var teacherId = User.GetUserId();
 
-            var result = await mediator.Send(new GetAllClassesCommand
+            var result = await mediator.Send(new GetTeacherClassesQuery
             {
-                TeacherId = teacherId
+                TeacherId = teacherId,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
             });
             return Ok(result);
         }

@@ -6,7 +6,6 @@ namespace SchoolManagementSystem.Application.DTOs.Class
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public bool IsActive { set; get; } = true;
         public Semester Semester { set; get; }
         public DateOnly StartDate { set; get; }
         public DateOnly EndDate { set; get; }

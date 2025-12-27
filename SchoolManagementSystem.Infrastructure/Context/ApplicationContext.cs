@@ -39,6 +39,16 @@ namespace SchoolManagementSystem.Infrastructure.Context
             modelBuilder.Entity<StudentClass>()
                .HasKey(sc => new { sc.StudentId, sc.ClassId });
 
+            // Optimizes paginated student class list ordered by enrollment date
+            modelBuilder.Entity<StudentClass>()
+                .HasIndex(sc => new { sc.StudentId, sc.EnrollmentDate })
+                .HasDatabaseName("IX_StudentClasses_StudentId_EnrollmentDate");
+
+            // Optimizes paginated teacher class list ordered by Id
+            modelBuilder.Entity<Class>()
+                .HasIndex(c => new { c.TeacherId, c.Id })
+                .HasDatabaseName("IX_Classes_TeacherId_Id"); ;
+
             base.OnModelCreating(modelBuilder);
         }
     }

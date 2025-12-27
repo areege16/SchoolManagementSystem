@@ -1,12 +1,12 @@
 ﻿using FluentValidation;
 using MediatR;
-using SchoolManagementSystem.Application.DTOs;
+using SchoolManagementSystem.Application.Common.Responses;
 using SchoolManagementSystem.Domain.Enums;
 
-namespace SchoolManagementSystem.Application
+namespace SchoolManagementSystem.Application.Common.Behaviors
 {
     public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-     where TResponse : ResponseDto<bool>, new()
+     where TResponse : ResponseDtoBase, new()
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
 
@@ -33,13 +33,14 @@ namespace SchoolManagementSystem.Application
 
                 if (errors.Count > 0)
                 {
-                    return (TResponse)ResponseDto<bool>.Error(
-                        ErrorCode.ValidationFailed,
-                        string.Join(" | ", errors)
-                    );
+                    return new TResponse
+                    {
+                        IsSuccess = false,
+                        ErrorCode = ErrorCode.ValidationFailed,
+                        Message = string.Join(" | ", errors)
+                    };
                 }
             }
-
             return await next();
         }
     }

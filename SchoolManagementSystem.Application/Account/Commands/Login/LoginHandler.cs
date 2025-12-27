@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using SchoolManagementSystem.Application.DTOs.Account;
-using SchoolManagementSystem.Application.DTOs;
 using Microsoft.AspNetCore.Identity;
 using SchoolManagementSystem.Domain.Models;
 using SchoolManagementSystem.Domain.Enums;
@@ -9,6 +8,7 @@ using SchoolManagementSystem.Application.Services.TokenService;
 using Microsoft.Extensions.Options;
 using SchoolManagementSystem.Application.Settings;
 using Microsoft.Extensions.Logging;
+using SchoolManagementSystem.Application.Common.Responses;
 
 namespace SchoolManagementSystem.Application.Account.Commands.Login
 {

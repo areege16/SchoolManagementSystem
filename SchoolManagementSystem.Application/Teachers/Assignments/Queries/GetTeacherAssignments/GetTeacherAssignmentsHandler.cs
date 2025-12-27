@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using SchoolManagementSystem.Application.DTOs.Assignment.Teacher;
-using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Domain.RepositoryContract;
 using SchoolManagementSystem.Domain.Models;
 using Microsoft.Extensions.Logging;
@@ -8,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using AutoMapper.QueryableExtensions;
 using AutoMapper;
 using SchoolManagementSystem.Domain.Enums;
+using SchoolManagementSystem.Application.Common.Responses;
 
 namespace SchoolManagementSystem.Application.Teachers.Assignments.Queries.GetTeacherAssignments
 {

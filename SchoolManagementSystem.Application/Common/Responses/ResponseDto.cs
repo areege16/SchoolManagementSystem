@@ -1,18 +1,10 @@
 ﻿using SchoolManagementSystem.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SchoolManagementSystem.Application.DTOs
+namespace SchoolManagementSystem.Application.Common.Responses
 {
-    public class ResponseDto<T>
+    public class ResponseDto<T> : ResponseDtoBase
     {
         public T Data { get; set; }
-        public bool IsSuccess { get; set; }
-        public string Message { get; set; }
-        public ErrorCode ErrorCode { get; set; }
         public static ResponseDto<T> Success(T data, string message = "")
         {
             return new ResponseDto<T>
@@ -36,4 +28,3 @@ namespace SchoolManagementSystem.Application.DTOs
         }
     }
 }
-

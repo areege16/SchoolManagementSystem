@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using SchoolManagementSystem.Application.DTOs;
+using SchoolManagementSystem.Application.Common.Responses;
 using SchoolManagementSystem.Application.DTOs.Assignment.Student;
 
 namespace SchoolManagementSystem.Application.Students.Assignments.Commands.SubmitAssignment

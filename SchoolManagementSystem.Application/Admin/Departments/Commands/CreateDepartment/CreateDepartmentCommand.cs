@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using SchoolManagementSystem.Application.DTOs;
+using SchoolManagementSystem.Application.Common.Responses;
 using SchoolManagementSystem.Application.DTOs.Department;
 
 namespace SchoolManagementSystem.Application.Admin.Departments.Commands.CreateDepartment

@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Domain.RepositoryContract;
 using SchoolManagementSystem.Domain.Models;
 using AutoMapper.QueryableExtensions;
@@ -8,10 +7,11 @@ using SchoolManagementSystem.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Application.DTOs.Assignment.Teacher;
 using Microsoft.Extensions.Logging;
+using SchoolManagementSystem.Application.Common.Responses;
 
 namespace SchoolManagementSystem.Application.Teachers.Assignments.Queries.GetAssignmentById
 {
-    public class GetAssignmentDetailsHandler : IRequestHandler<GetAssignmentDetailsQuery, ResponseDto<AssignmentDetailsDto>> // TODO: Include submission details when fetching assignment by ID
+    public class GetAssignmentDetailsHandler : IRequestHandler<GetAssignmentDetailsQuery, ResponseDto<AssignmentDetailsDto>>
     {
         private readonly IGenericRepository<Assignment> repository;
         private readonly IMapper mapper;

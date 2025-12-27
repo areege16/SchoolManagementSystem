@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using SchoolManagementSystem.Application.DTOs.Assignment.Student;
-using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Domain.RepositoryContract;
 using SchoolManagementSystem.Domain.Models;
 using AutoMapper;
@@ -8,6 +7,7 @@ using SchoolManagementSystem.Domain.Enums;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SchoolManagementSystem.Application.Common.Responses;
 
 namespace SchoolManagementSystem.Application.Students.Assignments.Queries.GetStudentGrades
 {
