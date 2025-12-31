@@ -39,20 +39,15 @@ namespace SchoolManagementSystem.Web.RepositoryImplementation
         }
         public void Update(T item)
         {
-            dbSet.Attach(item);
-            context.Entry(item).State = EntityState.Modified;
+            dbSet.Update(item);
         }
         public void UpdateRange(IEnumerable<T> items)
         {
             dbSet.UpdateRange(items);
         }
-        public void Remove(int id)
+        public void Remove(T item)
         {
-            var entity = dbSet.Find(id); // TODO: Revisit 
-            if (entity != null)
-            {
-                dbSet.Remove(entity);
-            }
+            dbSet.Remove(item);
         }
         public void RemoveRange(IEnumerable<T> items)
         {

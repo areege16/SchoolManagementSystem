@@ -61,7 +61,6 @@ namespace SchoolManagementSystem.Application.Teachers.Assignments.Commands.Grade
                 submission.Remarks = dto.Remarks;
                 submission.GradedByTeacherId = request.TeacherId;
 
-                submissionRepository.Update(submission);
                 await submissionRepository.SaveChangesAsync(cancellationToken);
 
                 logger.LogInformation(

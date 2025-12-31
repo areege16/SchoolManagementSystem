@@ -1,15 +1,11 @@
 ﻿using MediatR;
 using SchoolManagementSystem.Application.Common.Responses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Admin.Departments.Commands.DeleteDepartment
 {
-   public class DeleteDepartmentCommand:IRequest<ResponseDto<bool>>
+    public class DeleteDepartmentCommand : IRequest<ResponseDto<bool>>
     {
         public int Id { get; set; }
+        public string AdminId { get; set; }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SchoolManagementSystem.Application.Common.Responses;
 using SchoolManagementSystem.Domain.Enums;
 using SchoolManagementSystem.Domain.Models;
@@ -8,29 +10,90 @@ namespace SchoolManagementSystem.Application.Teachers.Classes.Commands.DeleteCla
 {
     public class DeleteClassHandler : IRequestHandler<DeleteClassCommand, ResponseDto<bool>>
     {
-        private readonly IGenericRepository<Class> repository;
+        private readonly IGenericRepository<Class> classRepository;
+        private readonly IGenericRepository<Assignment> assignmentRepository;
+        private readonly IGenericRepository<Attendance> attendanceRepository;
+        private readonly IGenericRepository<StudentClass> studentClassRepository;
+        private readonly IGenericRepository<Submission> submissionRepository;
+        private readonly ILogger<DeleteClassHandler> logger;
 
-        public DeleteClassHandler(IGenericRepository<Class> repository)
+        public DeleteClassHandler(IGenericRepository<Class> classRepository,
+                                  IGenericRepository<Assignment> assignmentRepository,
+                                  IGenericRepository<Attendance> attendanceRepository,
+                                  IGenericRepository<StudentClass> studentClassRepository,
+                                  IGenericRepository<Submission> submissionRepository,
+                                  ILogger<DeleteClassHandler> logger)
         {
-            this.repository = repository;
+            this.classRepository = classRepository;
+            this.assignmentRepository = assignmentRepository;
+            this.attendanceRepository = attendanceRepository;
+            this.studentClassRepository = studentClassRepository;
+            this.submissionRepository = submissionRepository;
+            this.logger = logger;
         }
         public async Task<ResponseDto<bool>> Handle(DeleteClassCommand request, CancellationToken cancellationToken)
         {
+            var teacherId = request.TeacherId;
             try
             {
-                var cls = await repository.FindByIdAsync(request.Id, cancellationToken);
+                logger.LogInformation("Teacher {TeacherId} attempting to delete class with id: {ClassId}", teacherId, request.Id);
+
+                var cls = await classRepository.FindByIdAsync(request.Id, cancellationToken);
                 if (cls == null)
-                    return ResponseDto<bool>.Error(ErrorCode.NotFound, "Class not found ");
+                {
+                    logger.LogWarning("Class  with id {ClassId} not found", request.Id);
+
+                    return ResponseDto<bool>.Error(ErrorCode.NotFound, $"Class with id: {request.Id} not found ");
+                }
+
+                if (cls.TeacherId != teacherId)
+                {
+                    logger.LogWarning("Teacher {TeacherId} tried to delete class {ClassId} owned by {OwnerTeacherId}", teacherId, request.Id, cls.TeacherId);
+
+                    return ResponseDto<bool>.Error(ErrorCode.Unauthorized, "You cannot delete a class that does not belong to you.");
+                }
+
+                var assignments = await assignmentRepository
+                    .GetFiltered(x => x.ClassId == request.Id, asTracking: true)
+                    .ToListAsync(cancellationToken);
+
+                var submissions = await submissionRepository
+                    .GetFiltered(s => s.Assignment.ClassId == request.Id, asTracking: true)
+                    .ToListAsync(cancellationToken);
+
+                var attendances = await attendanceRepository
+                    .GetFiltered(a => a.ClassId == request.Id, asTracking: true)
+                    .ToListAsync(cancellationToken);
+
+                var studentClasses = await studentClassRepository
+                    .GetFiltered(sc => sc.ClassId == request.Id, asTracking: true)
+                    .ToListAsync(cancellationToken);
+
+                submissionRepository.RemoveRange(submissions);
+                assignmentRepository.RemoveRange(assignments);
+                attendanceRepository.RemoveRange(attendances);
+                studentClassRepository.RemoveRange(studentClasses);
 
                 cls.IsActive = false;
-                repository.Update(cls);
-                await repository.SaveChangesAsync(cancellationToken);
+                await classRepository.SaveChangesAsync(cancellationToken);
 
-                return ResponseDto<bool>.Success(true, "Class deleted successfully");
+                logger.LogInformation("Teacher {TeacherId} successfully deleted class {ClassId}: " +
+                                      "{SubmissionsCount} submissions, {assignmentCount} assignments, " +
+                                      "{AttendancesCount} attendances, {studentClassCount} student-class relations",
+                                      teacherId,
+                                      request.Id,
+                                      submissions.Count,
+                                      assignments.Count,
+                                      attendances.Count,
+                                      studentClasses.Count);
+
+                return ResponseDto<bool>.Success(true, $"Class with id {request.Id} deleted successfully");
             }
             catch (Exception ex)
             {
-                return ResponseDto<bool>.Error(ErrorCode.DatabaseError, $"Failed to delete class {ex.Message}");
+                logger.LogError(ex, "Teacher {TeacherId} failed to delete class. Class id: {ClassId}", teacherId, request.Id);
+
+                return ResponseDto<bool>.Error(ErrorCode.DatabaseError, "Failed to delete class");
             }
         }
     }

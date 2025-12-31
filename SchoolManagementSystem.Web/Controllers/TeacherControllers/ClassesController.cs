@@ -72,9 +72,11 @@ namespace SchoolManagementSystem.Web.Controllers.Teacher
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteClass(int id)
         {
+            var teacherId = User.GetUserId();
             var result = await mediator.Send(new DeleteClassCommand
             {
-                Id = id
+                Id = id,
+                TeacherId = teacherId
             });
             return Ok(result);
         }

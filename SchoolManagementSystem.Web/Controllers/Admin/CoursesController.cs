@@ -39,9 +39,11 @@ namespace SchoolManagementSystem.Web.Controllers.Admin
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCourse(int id)
         {
+            var adminId = User.GetUserId();
             var result = await mediator.Send(new DeleteCourseCommand
             {
-                Id = id
+                Id = id,
+                AdminId = adminId,
             });
             return Ok(result);
         }

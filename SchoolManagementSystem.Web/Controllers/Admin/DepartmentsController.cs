@@ -42,7 +42,12 @@ namespace SchoolManagementSystem.Web.Controllers.Admin
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDepartment(int id)
         {
-            var result = await mediator.Send(new DeleteDepartmentCommand { Id = id });
+            var adminId = User.GetUserId();
+            var result = await mediator.Send(new DeleteDepartmentCommand
+            {
+                Id = id,
+                AdminId = adminId
+            });
             return Ok(result);
         }
         #endregion
