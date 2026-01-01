@@ -3,7 +3,7 @@
 
 namespace SchoolManagementSystem.Application.Account.Commands.Login
 {
-    class LoginValidator:AbstractValidator<LoginCommand>
+    class LoginValidator : AbstractValidator<LoginCommand>
     {
         public LoginValidator()
         {

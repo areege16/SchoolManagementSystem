@@ -28,7 +28,7 @@ namespace SchoolManagementSystem.Infrastructure.Context
               .Property(c => c.IsActive)
               .HasDefaultValue(true);
 
-            modelBuilder.Entity<Class>().HasQueryFilter(i => i.IsActive);//TODO: Revisit 
+            modelBuilder.Entity<Class>().HasQueryFilter(i => i.IsActive);
 
             modelBuilder.Entity<RefreshToken>()
               .HasOne(rt => rt.ApplicationUser)

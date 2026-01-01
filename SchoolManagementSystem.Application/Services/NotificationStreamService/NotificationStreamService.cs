@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace SchoolManagementSystem.Application.Services.NotificationStreamService
 {
-    public class NotificationStreamService : INotificationStreamService  //TODO: move to infra layer
+    public class NotificationStreamService : INotificationStreamService
     {
         private readonly ConcurrentDictionary<string, List<HttpResponse>> clients = new();
         private readonly ILogger<NotificationStreamService> logger;

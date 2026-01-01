@@ -1,5 +1,4 @@
-﻿
-namespace SchoolManagementSystem.Application.DTOs.Account
+﻿namespace SchoolManagementSystem.Application.DTOs.Account
 {
     public class RegisterDto
     {

@@ -1,5 +1,4 @@
-﻿
-namespace SchoolManagementSystem.Domain.Enums
+﻿namespace SchoolManagementSystem.Domain.Enums
 {
     public enum ErrorCode
     {

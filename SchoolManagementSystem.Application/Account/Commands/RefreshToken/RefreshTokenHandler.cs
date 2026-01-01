@@ -1,15 +1,15 @@
 ﻿using MediatR;
-using SchoolManagementSystem.Application.DTOs.Account;
-using Microsoft.EntityFrameworkCore;
-using SchoolManagementSystem.Domain.Enums;
-using SchoolManagementSystem.Domain.RepositoryContract;
 using Microsoft.AspNetCore.Identity;
-using SchoolManagementSystem.Domain.Models;
-using SchoolManagementSystem.Application.Services.TokenService;
-using Microsoft.Extensions.Options;
-using SchoolManagementSystem.Application.Settings;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SchoolManagementSystem.Application.Common.Responses;
+using SchoolManagementSystem.Application.DTOs.Account;
+using SchoolManagementSystem.Application.Services.TokenService;
+using SchoolManagementSystem.Application.Settings;
+using SchoolManagementSystem.Domain.Enums;
+using SchoolManagementSystem.Domain.Models;
+using SchoolManagementSystem.Domain.RepositoryContract;
 
 namespace SchoolManagementSystem.Application.Account.Commands.RefreshToken
 {

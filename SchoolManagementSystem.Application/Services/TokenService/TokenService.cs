@@ -9,7 +9,7 @@ using System.Text;
 
 namespace SchoolManagementSystem.Application.Services.TokenService
 {
-    public class TokenService : ITokenService  //TODO: move to infra layer
+    public class TokenService : ITokenService 
     {
         private readonly JwtSettings jwtSettings;
 

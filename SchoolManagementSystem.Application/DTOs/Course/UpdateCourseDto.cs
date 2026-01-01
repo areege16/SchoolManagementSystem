@@ -1,6 +1,6 @@
 ﻿namespace SchoolManagementSystem.Application.DTOs.Course
 {
-   public class UpdateCourseDto 
+    public class UpdateCourseDto
     {
         public int Id { get; set; }
         public string? Name { get; set; }

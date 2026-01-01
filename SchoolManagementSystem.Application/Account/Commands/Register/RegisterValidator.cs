@@ -1,14 +1,8 @@
 ﻿using FluentValidation;
-using SchoolManagementSystem.Application.DTOs.Account;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Account.Commands.Register
 {
-   public class RegisterValidator : AbstractValidator<RegisterCommand>
+    public class RegisterValidator : AbstractValidator<RegisterCommand>
     {
         public RegisterValidator()
         {

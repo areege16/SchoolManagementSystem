@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.Application.Account.Commands.Login;
 using SchoolManagementSystem.Application.Account.Commands.RefreshToken;

@@ -11,7 +11,7 @@ using SchoolManagementSystem.Application.Common.Responses;
 
 namespace SchoolManagementSystem.Application.Teachers.Attendances.Queries.GetAttendanceHistory
 {
-    public class GetAttendanceHistoryHandler : IRequestHandler<GetAttendanceHistoryCommand, ResponseDto<List<AttendanceHistoryDto>>>//TODO : Change response to be grouped by Date instead of flat list.
+    public class GetAttendanceHistoryHandler : IRequestHandler<GetAttendanceHistoryCommand, ResponseDto<List<AttendanceHistoryDto>>>
     {
         private readonly IGenericRepository<Attendance> attendanceRepository;
         private readonly IMapper mapper;

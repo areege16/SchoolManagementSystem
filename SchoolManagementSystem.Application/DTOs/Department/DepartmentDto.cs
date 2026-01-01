@@ -1,13 +1,6 @@
-﻿using SchoolManagementSystem.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SchoolManagementSystem.Application.DTOs.Department
+﻿namespace SchoolManagementSystem.Application.DTOs.Department
 {
-   public class DepartmentDto
+    public class DepartmentDto
     {
         public int Id { get; set; }
         public string Name { get; set; }

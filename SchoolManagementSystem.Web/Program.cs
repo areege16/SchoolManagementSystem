@@ -75,8 +75,6 @@ namespace SchoolManagementSystem.Web
             builder.Services.AddDbContext<ApplicationContext>(option =>
             {
                 option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")); //("ProductionConnection"));
-                //option.LogTo(Console.WriteLine);
-                //option.EnableSensitiveDataLogging();
                 if (builder.Environment.IsDevelopment())
                 {
                     option.LogTo(
@@ -155,11 +153,10 @@ namespace SchoolManagementSystem.Web
                 await RoleSeeder.SeedRoles(scopedServices);
             }
             // Configure the HTTP request pipeline.
-            //if (app.Environment.IsDevelopment())
-            //{
+
             app.UseSwagger();
             app.UseSwaggerUI();
-            //}
+
             app.UseCors("MyPolicy");
 
             app.UseStaticFiles();

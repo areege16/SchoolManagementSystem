@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.Application.Admin.Courses.Commands.CreateCourses;
+using SchoolManagementSystem.Application.Admin.Courses.Commands.DeleteCourse;
 using SchoolManagementSystem.Application.Admin.Courses.Commands.UpdateCourse;
 using SchoolManagementSystem.Application.Admin.Courses.Queries.GetACourseById;
 using SchoolManagementSystem.Application.Admin.Courses.Queries.GetAllCourses;
-using SchoolManagementSystem.Application.Admin.Courses.Commands.DeleteCourse;
 using SchoolManagementSystem.Application.DTOs.Course;
 using SchoolManagementSystem.Web.Extensions;
 
