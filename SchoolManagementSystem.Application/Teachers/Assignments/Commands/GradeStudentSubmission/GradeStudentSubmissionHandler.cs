@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SchoolManagementSystem.Application.Common.Responses;
+using SchoolManagementSystem.Application.DTOs.Notification;
+using SchoolManagementSystem.Application.Services.NotificationStreamService;
 using SchoolManagementSystem.Domain.Enums;
 using SchoolManagementSystem.Domain.Models;
 using SchoolManagementSystem.Domain.RepositoryContract;
@@ -12,15 +14,21 @@ namespace SchoolManagementSystem.Application.Teachers.Assignments.Commands.Grade
     {
         private readonly IGenericRepository<Submission> submissionRepository;
         private readonly IGenericRepository<Assignment> assignmentRepository;
+        private readonly IGenericRepository<Notification> notificationRepository;
         private readonly ILogger<GradeStudentSubmissionHandler> logger;
+        private readonly INotificationStreamService notificationStreamService;
 
         public GradeStudentSubmissionHandler(IGenericRepository<Submission> submissionRepository,
                                              IGenericRepository<Assignment> assignmentRepository,
-                                             ILogger<GradeStudentSubmissionHandler> logger)
+                                             IGenericRepository<Notification> notificationRepository,
+                                             ILogger<GradeStudentSubmissionHandler> logger,
+                                             INotificationStreamService notificationStreamService)
         {
             this.submissionRepository = submissionRepository;
             this.assignmentRepository = assignmentRepository;
+            this.notificationRepository = notificationRepository;
             this.logger = logger;
+            this.notificationStreamService = notificationStreamService;
         }
         public async Task<ResponseDto<bool>> Handle(GradeStudentSubmissionCommand request, CancellationToken cancellationToken)
         {
@@ -61,7 +69,35 @@ namespace SchoolManagementSystem.Application.Teachers.Assignments.Commands.Grade
                 submission.Remarks = dto.Remarks;
                 submission.GradedByTeacherId = request.TeacherId;
 
+                var dbNotification = new Notification
+                {
+                    Title = "Assignment Graded",
+                    Message = $"Your assignment has been graded with a score of {dto.Grade}.",
+                    IsRead = false,
+                    RecipientId = dto.StudentId,
+                    RecipientRole = "Student",
+                    CreatedDate = DateTime.UtcNow
+                };
+                notificationRepository.Add(dbNotification);
+
                 await submissionRepository.SaveChangesAsync(cancellationToken);
+
+                try
+                {
+                    var notificationDto = new NotificationDto
+                    {
+                        Id = dbNotification.Id,
+                        Title = dbNotification.Title,
+                        Message = dbNotification.Message,
+                        IsRead = dbNotification.IsRead,
+                        CreatedAt = dbNotification.CreatedDate
+                    };
+                    await notificationStreamService.NotifyUser(dto.StudentId, notificationDto);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(ex, "Failed to send real-time notification to student {StudentId}. Notification saved in database.", dto.StudentId);
+                }
 
                 logger.LogInformation(
                     "Submission graded successfully. Assignment {AssignmentId}, Student {StudentId}. Old Grade: {OldGrade}, New Grade: {NewGrade}. Old Remarks: {OldRemarks}, New Remarks: {NewRemarks}. Graded by Teacher {TeacherId}",

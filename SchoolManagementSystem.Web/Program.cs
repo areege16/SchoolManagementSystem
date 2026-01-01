@@ -1,25 +1,26 @@
 
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using SchoolManagementSystem.Domain.Models;
-using SchoolManagementSystem.Infrastructure.Context;
-using SchoolManagementSystem.Web.Seed;
-using SchoolManagementSystem.Domain.RepositoryContract;
-using SchoolManagementSystem.Web.RepositoryImplementation;
-using SchoolManagementSystem.Application.AutoMapperProfile;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System.Security.Claims;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using SchoolManagementSystem.Application.Account.Commands.Register;
+using SchoolManagementSystem.Application.AutoMapperProfile;
+using SchoolManagementSystem.Application.Common.Behaviors;
+using SchoolManagementSystem.Application.Services.NotificationStreamService;
 using SchoolManagementSystem.Application.Services.TokenService;
 using SchoolManagementSystem.Application.Settings;
+using SchoolManagementSystem.Domain.Models;
+using SchoolManagementSystem.Domain.RepositoryContract;
+using SchoolManagementSystem.Infrastructure.Context;
+using SchoolManagementSystem.Web.RepositoryImplementation;
+using SchoolManagementSystem.Web.Seed;
 using Serilog;
-using Microsoft.OpenApi.Models;
-using SchoolManagementSystem.Application.Common.Behaviors;
+using System.Security.Claims;
+using System.Text;
 
 
 namespace SchoolManagementSystem.Web
@@ -114,6 +115,7 @@ namespace SchoolManagementSystem.Web
 
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddSingleton<ITokenService, TokenService>();
+            builder.Services.AddSingleton<INotificationStreamService, NotificationStreamService>();
             builder.Services.AddMemoryCache();
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JWT"));
             builder.Services.Configure<CacheSettings>(builder.Configuration.GetSection("CacheSettings"));
@@ -138,6 +140,13 @@ namespace SchoolManagementSystem.Web
                 configuration.ReadFrom.Configuration(context.Configuration);
             });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("MyPolicy", policy =>
+                    policy.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin()
+                );
+            });
+
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())
@@ -148,9 +157,11 @@ namespace SchoolManagementSystem.Web
             // Configure the HTTP request pipeline.
             //if (app.Environment.IsDevelopment())
             //{
-                app.UseSwagger();
-                app.UseSwaggerUI();
+            app.UseSwagger();
+            app.UseSwaggerUI();
             //}
+            app.UseCors("MyPolicy");
+
             app.UseStaticFiles();
             app.UseHttpsRedirection();
 

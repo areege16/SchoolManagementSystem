@@ -2,18 +2,14 @@
 using Microsoft.IdentityModel.Tokens;
 using SchoolManagementSystem.Application.Settings;
 using SchoolManagementSystem.Domain.Models;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Services.TokenService
 {
-    public class TokenService : ITokenService
+    public class TokenService : ITokenService  //TODO: move to infra layer
     {
         private readonly JwtSettings jwtSettings;
 

@@ -10,7 +10,6 @@ namespace SchoolManagementSystem.Application.DTOs.Class
         public DateOnly StartDate { set; get; }
         public DateOnly EndDate { set; get; }
         public int CourseId { set; get; }
-        public string? TeacherId { get; set; }
         public List<StudentsInClassDto>? StudentsInClass { get; set; } = new List<StudentsInClassDto>();
     }
 }
