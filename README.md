@@ -1,138 +1,83 @@
-# SchoolManagementSystem
+# School Management System API
 
-## Setup Instructions
+Backend API for a school management system built with **.NET 8**, **Clean Architecture**, and **Entity Framework Core**.  
+Supports role-based access (Admin, Teacher, Student). This API enables administrators, teachers, and students to manage departments, courses, classes, attendance, assignments, grades, and notifications.
 
-1. **Create the project structure**  
-   - Created a new ASP.NET Core Web API project named `SchoolManagementSystem` (version 8.0)
-   - Followed **Clean Architecture** by adding three additional layers:
-     - `SchoolManagementSystem.Domain`
-     - `SchoolManagementSystem.Application`
-     - `SchoolManagementSystem.Infrastructure`
-     - `SchoolManagementSystem.Web`
+## ✨ Features
 
-2. **Add project references**  
-   - Added necessary references between the layers to allow proper interaction:
-     - `Web` references `Application` and `Infrastructure`and `Infrastructure`
-     - `Application` references `Domain` and `Infrastructure`
-     - `Infrastructure` references `Domain`
+- **Role-Based Access Control** (Admin / Teacher / Student)
+- **JWT Authentication with refresh token support** 
+- **Full CRUD** for departments, courses, classes, assignments, attendance and more
+- **Real-time notifications** via **Server-Sent Events (SSE)** when:
+  - An assignment is graded
+  - A new class is created
+- **Async/await** for all DB operations
+- **In-memory caching** for departments and courses
+- **Pagination** for classes
+- **Soft delete** support (`IsActive` flag)
+- **File upload** for assignment submissions (IFormFile)
+- **Comprehensive validation** (FluentValidation) and **custom error responses**
+- **Logging with Serilog** for structured logging
+- **Swagger UI** with Bearer Token authorization
 
-3. **Install required NuGet packages (Installed packages suitable for .NET 8.0)**  
-   - Installed necessary packages for each layer (e.g., Entity Framework Core, AutoMapper, Identity, FluentValidation, MediatR, AutoMapper etc.)
-  
-4. **Registered services in `Program.cs`**
+## 🛠️ Tech Stack
 
-5. **Create entities and custom ApplicationUser and ApplicationRole**  
-   - Defined all domain models in the `Domain` layer (e.g., `Student`, `Teacher`, `Assignment`, `Submission`).
-   - Created a custom `ApplicationUser` class extending `IdentityUser` to manage users (students and teachers).
+- **Framework**: .NET 8 Web API  
+- **Architecture**: Clean Architecture (Domain, Application, Infrastructure, Web), MediatR, CQRS  
+- **ORM**: Entity Framework Core  
+- **Database**: SQL Server  
+- **Auth**: JWT + Refresh Tokens  
+- **Tools**: MediatR, AutoMapper, FluentValidation, Serilog, Swagger  
 
-## DB migration 
+## 🚀 Getting Started
 
-1. **Configure database connection**  
-   - Added the database connection string in `appsettings.json` for Entity Framework Core:
-   ```json
-   "ConnectionStrings": {
-     "DefaultConnection": "Data Source=Areege;Initial Catalog=SchoolManagement;Integrated Security=True;Encrypt=True;Trust Server Certificate=True"
-   }
-   
-2. **Create ApplicationContext**
-   - Created `ApplicationContext` in `Infrastructure` layer, inheriting `IdentityDbContext<ApplicationUser, ApplicationRole, string>`.
-   - Defined `DbSet`s for all entities and applied default values / query filters as needed.
-3. **Apply migrations** 
-   - Created initial migration: 
-       Add-Migration InitialCreate
-     
-     - Disabled cascade delete to avoid cycles.
-       
-   - Applied migration:
-     Update-Database
+### Prerequisites
+- .NET 8 SDK
+- SQL Server (or LocalDB)
 
-## Sample API Requests
+### Setup
+1. Clone the repository
+2. Update the connection string in `Web/appsettings.json` (all other settings are pre-configured)
+3. Apply database migrations:
+   ```bash
+   dotnet ef database update --project Infrastructure --startup-project Web
 
-### 1. Login (Account)
-**POST** `https://localhost:7058/api/Account/login`  
-**Headers:**  
-Content-Type: application/json
-**Body (raw JSON):**  
-```json
-{
-  "userName": "string",
-  "password": "string"
-}
+ **project references**  
+   - `Web` references `Application` , `Domain`, and `Infrastructure`
+   - `Application` references `Domain` and `Infrastructure`
+   - `Infrastructure` references `Domain`
 
-2. Submit Assignment (Student)
-POST /api/student/assignments/{id}/submit
-Headers:
-Authorization: Bearer <token>
-File: <select file>
-AssignmentId: <assignment id>
+> 💡 API documentation is available via Swagger UI:  
+> 🖥️ **Local**: [http://localhost:7058/swagger](http://localhost:7058/swagger)
+> 
+> 🌐 **Live**: [https://school-mgmt-sys.runasp.net/swagger](https://school-mgmt-sys.runasp.net/swagger)  
+>   
+> 🔑 **To test secured endpoints**:  
+> 1. Register a new user via `/api/auth/register`  
+> 2. Log in via `/api/auth/login` to get a JWT token  
+> 3. In Swagger, click **Authorize** and enter: `Bearer <your_token>`  
+>    *(Example: `Bearer eyJhbGciOi...`)*
 
+## 📡 Key API Endpoints
 
-3. Get All Classes
-GET https://localhost:7058/api/Classes/GetAllClasses
-Headers:
-Authorization: Bearer <token>
+### 🔐 Authentication
+- `POST /api/auth/register` – Register new user (Admin/Teacher/Student)
+- `POST /api/auth/login` – Login and receive JWT token
+- `POST /api/auth/refresh-token` – Refresh expired token
 
-4. View Enrolled Classes (Student)
-GET /api/student/classes
-Headers:
-Authorization: Bearer <token>
+### 👨‍💼 Admin
+- `POST /api/admin/departments` – Create department
+- `PUT /api/admin/departments/{id}` – Update department
+- `POST /api/admin/courses` – Create course 
 
-5. View Attendance (Student)
-GET /api/student/attendance
-Headers:
-Authorization: Bearer <token>
+### 👩‍🏫 Teacher
+- `POST /api/teacher/classes` – Create class 
+- `POST /api/teacher/assignments` – Create assignment
+- `POST /api/teacher/assignments/{id}/grade` – Grade student submission
+- `POST /api/teacher/attendance` – Mark student attendance
 
-6. View Grades (Student)
-GET /api/student/grades
-Headers:
-Authorization: Bearer <token>
-
-7. Create Assignment (Teacher)
-POST /api/teacher/assignments
-Headers:
-Authorization: Bearer <token>
-Content-Type: application/json
-Body (raw JSON):
-{
-  "title": "string",
-  "description": "string",
-  "dueDate": "2025-12-01T22:45:31.276Z",
-  "classId": 0,
-  "createdByTeacherId": "string",
-  "createdDate": "2025-12-01T22:45:31.276Z"
-}
-
- 8. Grade Student Submission (Teacher)
-POST /api/teacher/assignments/{id}/grade
-Headers:
-Authorization: Bearer <token>
-Content-Type: application/json
-Body (raw JSON):
-{
-  "id": 0,
-  "assignmentId": 0,
-  "studentId": "string",
-  "grade": 0,
-  "remarks": "string"
-}
-
-9. Create Department (Admin)
-POST /api/Classes
-Headers:
-Authorization: Bearer <token>
-Content-Type: application/json
-Body (raw JSON):
-{
-  "name": "string",
-  "isActive": true,
-  "semester": 1,
-  "startDate": "2025-12-01",
-  "endDate": "2025-12-01",
-  "courseId": 0,
-  "teacherId": "string"
-}
-
-10. Create Department (Admin)
-Get /api/Departments
-Headers:
-Authorization: Bearer <token>
+### 👨‍🎓 Student
+- `GET /api/student/classes` – View enrolled classes
+- `POST /api/student/assignments/{id}/submit` – Submit assignment file
+- `GET /api/student/grades` – View graded assignments
+- `GET /api/student/notifications/stream` – **SSE stream** for real-time notifications
